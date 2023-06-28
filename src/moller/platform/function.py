@@ -1,0 +1,158 @@
+import logging
+logger = logging.getLogger(__name__)
+
+class ScriptFunction:
+    def __init__(self, info):
+        pass
+
+    function_is_ready = r"""
+function _is_ready () {
+    item_=$1
+    logfile_=$2
+    if [ ! -e $logfile_ ]; then
+	[ $_debug -eq 1 ] && echo "DEBUG: $item_: logfile $logfile_ not found"
+        return 1
+    fi
+    status=`grep '\b'$item_'\b' $logfile_ | tail -1 | awk '{print $7}'`
+    if [ -z "$status" ]; then
+	[ $_debug -eq 1 ] && echo "DEBUG: $item_: status not found"
+        return 1
+    fi
+    if [ $status = 0 ]; then
+	[ $_debug -eq 1 ] && echo "DEBUG: $item_: status ok. lets proceed"
+        return 0
+    else
+	[ $_debug -eq 1 ] && echo "DEBUG: $item_: status not ready"
+        return 1
+    fi
+}
+export -f _is_ready
+    """
+
+    function_setup_max_njob = r"""
+_max_njob=1024
+
+function _setup_max_njob () {
+    _req_openfiles=16384
+    _num_openfiles=`ulimit -n`
+    _limit_openfiles=`ulimit -Hn`
+    if [ $_num_openfiles -ge $_req_openfiles ]; then
+        :
+	[ $_debug -eq 1 ] && echo "DEBUG: setup_max_njob: num_openfiles already satisfied"
+    elif [ $_req_openfiles -le $_limit_openfiles ]; then
+        ulimit -n $_req_openfiles
+	[ $_debug -eq 1 ] && echo "DEBUG: setup_max_njob: num_openfiles set to $_req_openfiles"
+    else
+        ulimit -n $_limit_openfiles
+	[ $_debug -eq 1 ] && echo "DEBUG: setup_max_njob: num_openfiles set to upper limit $_limit_openfiles"
+    fi
+    _num_openfiles=`ulimit -n`
+    _limit_njob=$(( ((_num_openfiles - 16) / 4) /10*9 ))
+    if [ $_max_njob -gt $_limit_njob ]; then
+        _max_njob=$_limit_njob
+    fi
+    [ $_debug -eq 1 ] && echo "DEBUG: max_njob=$_max_njob"
+}
+    """
+
+    function_run_parallel = r"""
+function _run_parallel_task () {
+    _cmd=$1
+    _sig=$2
+    _arg=$3
+    _x0=$4
+    _w0=$5
+    _x1=$6
+    _slot_id=$(( 1+(_x1-1)+_w0*(_x0-1) ))
+    [ $_debug -eq 1 ] && echo "DEBUG: run task: $_cmd $_arg $_sig x0=$_x0, w0=$_w0, x1=$_x1, slot=$_slot_id"
+    $_cmd $_sig $_arg $_slot_id
+}
+export -f _run_parallel_task
+
+function run_parallel () {
+    #_njob=$1
+    _sig=$1
+    _cmd=$2
+    _logfile=$3
+
+    _find_multiplicity $_sig
+    _njob=$_multiplicity
+    _sig2=$_signature
+
+    _setup_run_parallel
+
+    if [ $_njob -le $_max_njob ]; then
+	[ $_debug -eq 1 ] && echo "DEBUG: run: cmd=$_cmd, log=$_logfile, sig=$_sig2, njob=$_njob, resume=$_resume_opt"
+        parallel $_resume_opt --joblog ${_logfile} -j $_njob $_cmd "$_sig2" {} {%}
+    else
+        _min_nchunk=16
+        _nchunk=$(( _min_nchunk < _njob/_max_njob ? _njob/_max_njob : _min_nchunk ))
+        _nway=$(( _njob % _nchunk == 0 ? _njob / _nchunk : _njob / _nchunk + 1 ))
+        [ $_debug -eq 1 ] && echo "DEBUG: run nested: nchunk=${_nchunk}, nway=${_nway}, cmd=$_cmd, log=$_logfile, sig=$_sig2, resume=$_resume_opt"
+        parallel --pipe --roundrobin -N $_nchunk -j $_nway --slotreplace '{X0}' \
+             parallel -j $_nchunk \
+                 $_resume_opt --joblog ${_logfile}.{X0} \
+                 -I '{W}' --slotreplace '{X1}' \
+                 _run_parallel_task $_cmd "$_sig2" {W} {X0} $_nchunk {X1}
+    fi
+}
+export -f run_parallel
+    """
+
+    function_main = r"""    
+#--- initialize
+_setup_max_njob
+
+#--- parse options
+initargs="$@"
+scriptargs=""
+retry=0
+
+while [ -n "$*" ]
+do
+    case "$1" in
+	-h | --help | -help)
+	    echo $0 [--retry] listfile [...]
+	    exit 0
+	    ;;
+	--retry | -retry)
+	    _resume_opt="--resume-failed"
+	    shift
+	    ;;
+	--)
+	    shift
+	    break
+	    ;;
+	-*)
+	    echo "unknown option: $1"
+	    exit 1
+	    ;;
+	*)
+	    scriptargs="$scriptargs $1"
+	    shift
+	    ;;
+    esac
+done
+
+if [ -z $scriptargs ]; then
+    #echo "no listfile specified"
+    #exit 0
+    if [ -e "list.dat" ]; then
+	echo "no listfile specified. assume default: list.dat"
+	scriptargs="list.dat"
+    else
+	echo "no listfile specified. stop."
+	exit 0
+    fi
+fi
+
+mplist=( `cat $scriptargs | xargs` )
+"""
+
+    function_defs = [
+        function_is_ready,
+        function_setup_max_njob,
+        function_run_parallel,
+    ]
+    
+    

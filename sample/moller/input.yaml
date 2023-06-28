@@ -59,7 +59,7 @@ jobs:
       srun python3 ${cif2qewan} *.cif ${PATH_TOML}/cif2qewan.toml
   scf:
     description: SCF
-    node: [1,24,4]
+    node: [24,4]
     run: |
       cd qe
       srun pw.x -nk 24 -in scf.in > scf.out
@@ -71,14 +71,14 @@ jobs:
       cp -r work band
   nscf:
     description: NSCF for check Wannier
-    node: [1,64,2]
+    node: [64,2]
     run: |
       cd qe/check_wannier
       sed -e "s/electrons/electrons\n  diagonalization = 'cg'/g" nscf.in > nscf_cg.in
       srun pw.x -nk 64 -in nscf_cg.in > nscf.out
   band:
     description: Band for check Wannier
-    node: [1,64,2]
+    node: [64,2]
     run: |
       cd qe/band
       sed -e "s/electrons/electrons\n  diagonalization = 'cg'/g" nscf.in > nscf_cg.in
@@ -86,7 +86,7 @@ jobs:
       srun bands.x -nk 64 -in band.in > band.out
   nscf2:
     description: NSCF
-    node: [1,64,2]
+    node: [64,2]
     run: |
       cd qe
       sed -e "s/electrons/electrons\n  diagonalization = 'cg'/g" nscf.in > nscf_cg.in

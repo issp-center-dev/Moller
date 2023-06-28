@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "HTP-tools"
+version = "0.1-dev"
+description = "High-ThroughtPut calculation tools"
+authors = ["HTP-tools developers <htp-tools-dev@issp.u-tokyo.ac.jp>"]
+license = "GPL-3.0-or-later"
+
+readme = "README.md"
+repository = "https://github.com/issp-center-dev/HTP-tools-dev"
+
+packages = [
+  { include = "moller", from = "src" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+"ruamel.yaml" = "^0.17"
+
+[tool.poetry.extras]
+
+[tool.poetry.dev-dependencies]
+
+[tool.poetry.scripts]
+moller = "moller.main:main"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
