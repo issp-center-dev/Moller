@@ -15,6 +15,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.7"
 "ruamel.yaml" = "^0.17"
+tabulate = "^0.9"
 
 [tool.poetry.extras]
 
@@ -22,6 +23,7 @@ python = "^3.7"
 
 [tool.poetry.scripts]
 moller = "moller.main:main"
+moller_status = "moller.moller_status:main"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
