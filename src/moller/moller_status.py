@@ -112,7 +112,7 @@ class TaskStatus:
         return lines
 
     def write(self, mode, output_file):
-        if mode == "text" or mode == "default":
+        if mode is None or mode == "text":
             self.write_table(output_file)
         elif mode == "csv":
             self.write_csv(output_file)
@@ -211,24 +211,14 @@ def main():
     parser.add_argument('job_list', nargs='?', default=None, help='job list file (list.dat)')
     parser.add_argument('-o', '--output', dest='output_file', metavar='output_file', default=None, help='output file')
     parse_target = parser.add_mutually_exclusive_group()
-    parse_target.add_argument('--text', action='store_true', help='output in csv format')
-    parse_target.add_argument('--csv', action='store_true', help='output in csv format')
-    parse_target.add_argument('--html', action='store_true', help='output in html format')
+    parse_target.add_argument('--text', action='store_const', const='text', dest='mode', help='output in text format')
+    parse_target.add_argument('--csv',  action='store_const', const='csv',  dest='mode', help='output in csv format')
+    parse_target.add_argument('--html', action='store_const', const='html', dest='mode', help='output in html format')
 
     args = parser.parse_args()
 
-    if args.text:
-        mode = 'text'
-    if args.csv:
-        mode = 'csv'
-    if args.html:
-        mode = 'html'
-    if not (args.text or args.csv or args.html):
-        mode = 'default'
-
     status = TaskStatus(args.input_yaml, args.job_list)
-
-    status.write(mode, args.output_file)
+    status.write(args.mode, args.output_file)
 
 if __name__ == '__main__':
     main()
