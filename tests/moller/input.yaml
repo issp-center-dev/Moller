@@ -1,0 +1,49 @@
+name: testjob
+description: moller tests
+
+platform:
+  system:  ohtaka
+  queue:   i8cpu
+  node:    8
+  elapsed: 00:30:00
+
+prologue:
+  code: |
+    module purge
+    module load oneapi_compiler/2023.0.0 openmpi/4.1.5-oneapi-2023.0.0-classic
+
+    MATERIAPPS_ROOT=/home/issp/materiapps/oneapi_compiler_classic-2023.0.0--openmpi-4.1.5
+    source ${MATERIAPPS_ROOT}/parallel/parallelvars-20210622-1.sh
+    source ${MATERIAPPS_ROOT}/python3/python3vars-3.9.16-1.sh
+    
+    ulimit -s unlimited
+
+epilogue:
+  code: |
+    echo "done."
+
+jobs:
+  start:
+    parallel: false
+    run: |
+      echo "start..."
+  task1:
+    description: task 1
+    node: [1,16]
+    run: |
+      srun python3 ../moller_test.py $_work_item --sleep 3 --fail 10
+  task2:
+    description: task 2
+    node: [8,16]
+    run: |
+      srun python3 ../moller_test.py $_work_item --sleep 3 --fail 10
+  task3:
+    description: task 3
+    node: [12,16]
+    run: |
+      srun python3 ../moller_test.py $_work_item --sleep 3 --fail 10
+  task4:
+    description: task 4
+    node: [2,16,8]
+    run: |
+      srun python3 ../moller_test.py $_work_item --sleep 3 --fail 10
