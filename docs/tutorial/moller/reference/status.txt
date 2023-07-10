@@ -1,0 +1,10 @@
+| job          | scf   | nscf   | band   |
+|--------------|-------|--------|--------|
+| dataset_0001 | o     | o      | o      |
+| dataset_0002 | o     | o      | o      |
+| dataset_0003 | o     | o      | o      |
+| dataset_0004 | o     | o      | o      |
+| dataset_0005 | o     | o      | o      |
+| dataset_0006 | o     | o      | o      |
+| dataset_0007 | o     | o      | o      |
+| dataset_0008 | o     | o      | o      |
