@@ -138,6 +138,7 @@ class ScriptGenerator:
     def setup(self, info):
         self.name = info.get('name', sys.argv[0])
         self.desc = info.get('description', None)
+        self.output_file = info.get('output_file', None)
 
         platform_info = info.get('platform', None)
         self.platform = create_platform(platform_info.get("system", None), platform_info)
@@ -173,9 +174,8 @@ class ScriptGenerator:
         self.platform.generate_header(fp)
         for task in self.tasklist:
             task.generate(fp)
-        pass
 
-def run(*, info_file = None, info_dict = None):
+def run(*, info_file = None, info_dict = None, output = None):
     if info_dict is None and info_file is None:
         msg = 'run: neither info_file and info_dict specified.'
         logger.error(msg)
@@ -198,13 +198,24 @@ def run(*, info_file = None, info_dict = None):
             raise RuntimeError(msg)
 
     scriptgen = ScriptGenerator(info_dict)
-    scriptgen.generate(sys.stdout)
+
+    if output is not None:
+        pass
+    elif scriptgen.output_file is not None:
+        output = scriptgen.output_file
+
+    if output is not None:
+        with open(output, "w") as fp:
+            scriptgen.generate(fp)
+    else:
+        scriptgen.generate(sys.stdout)
 
 def main():
     import argparse
 
     parser = argparse.ArgumentParser(prog='moller')
     parser.add_argument('input_yaml', nargs='?', default=None, help='task description file')
+    parser.add_argument('-o', '--output', nargs='?', default=None, help='output file')
     parser.add_argument('--version', action='store_true', help='show version')
 
     args = parser.parse_args()
@@ -217,14 +228,7 @@ def main():
         parser.print_help()
         sys.exit(1)
 
-    run(info_file = args.input_yaml)
+    run(info_file = args.input_yaml, output = args.output)
 
 if __name__ == '__main__':
-    args = sys.argv
-    if len(args) >=2 :
-        # try:
-        #     run(info_file = args[1])
-        # except Exception as e:
-        #     logger.error(e)
-        #     sys.exit(1)
-        run(info_file = args[1])    
+    main()
