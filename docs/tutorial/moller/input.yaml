@@ -1,0 +1,45 @@
+name: testjob
+description: Sample task file
+
+platform:
+  system:  ohtaka
+  queue:   i8cpu
+  node:    8
+  elapsed: 00:30:00
+
+prologue:
+  code: |
+    module purge
+    module load oneapi_compiler/2023.0.0 openmpi/4.1.5-oneapi-2023.0.0-classic
+
+    MATERIAPPS_ROOT=/home/issp/materiapps/oneapi_compiler_classic-2023.0.0--openmpi-4.1.5
+    
+    source ${MATERIAPPS_ROOT}/parallel/parallelvars-20210622-1.sh
+    source ${MATERIAPPS_ROOT}/espresso/espressovars.sh
+
+    ulimit -s unlimited
+
+epilogue:
+  code: |
+    echo "done."
+
+jobs:
+  start:
+    parallel: false
+    run: |
+      echo "start..."
+  scf:
+    description: SCF calculation
+    node: [8,16]
+    run: |
+      srun pw.x -in scf.in > scf.out
+  nscf:
+    description: NSCF calculation
+    node: [8,16]
+    run: |
+      srun pw.x -in nscf.in > nscf.out
+  band:
+    description: Band calculation
+    node: [8,16]
+    run: |
+      srun bands.x -in band.in > band.out
