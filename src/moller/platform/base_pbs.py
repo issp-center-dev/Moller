@@ -35,10 +35,7 @@ class BasePBS(Platform):
             sched_params.append('-N {}'.format(self.job_name))
 
         fp.write(shebang)
-        fp.write('\n'.join([ sched_key + s for s in sched_params ]) + '\n')
-        fp.write('\n')
-        fp.write('export _debug=1')
-        fp.write('\n')
+        fp.write('\n'.join([ sched_key + s for s in sched_params ]) + '\n\n')
 
     function_find_multiplicity = r"""
 function _gen_mask () {
@@ -200,13 +197,14 @@ export -f _setup_run_parallel
         var_list.append(r'declare -a _node_table=()')
         var_list.append(r'declare -a _mask_table=()')
         var_list.append(r'_signature=""')
-        var_list.append(r'_resume_opt="--resume"')
         var_list.append(r'export _enable_mask=0')
         var_list.append(r'[ $_debug -eq 1 ] && echo "DEBUG: nodefile=$PBS_NODEFILE" && echo "DEBUG: nodes=${_nodes[@]}" && echo "DEBUG: cores=$_ncores"')
         return '\n'.join(var_list) + '\n'
 
     def generate_function(self):
-        str  = self.generate_variable()
+        str = ''
+        str += ScriptFunction.function_setup_vars
+        str += self.generate_variable()
         str += self.generate_function_body()
         str += ScriptFunction.function_main
         return str

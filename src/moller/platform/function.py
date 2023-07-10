@@ -5,15 +5,26 @@ class ScriptFunction:
     def __init__(self, info):
         pass
 
+    function_setup_vars = r"""
+export _debug=1
+
+retry=0
+
+"""
+
     function_is_ready = r"""
 function _is_ready () {
     item_=$1
     logfile_=$2
     if [ ! -e $logfile_ ]; then
-	[ $_debug -eq 1 ] && echo "DEBUG: $item_: logfile $logfile_ not found"
-        return 1
+        l_=`ls ${logfile_}.[0-9]* 2> /dev/null`
+        if [ -z "$l_" ]; then
+            [ $_debug -eq 1 ] && echo "DEBUG: $item_: logfile $logfile_ not found"
+            return 1
+        fi
+        logfile_=${l_}
     fi
-    status=`grep '\b'$item_'\b' $logfile_ | tail -1 | awk '{print $7}'`
+    status=`grep -h '\b'$item_'\b' $logfile_ | tail -1 | awk '{print $7}'`
     if [ -z "$status" ]; then
 	[ $_debug -eq 1 ] && echo "DEBUG: $item_: status not found"
         return 1
@@ -106,7 +117,6 @@ _setup_max_njob
 #--- parse options
 initargs="$@"
 scriptargs=""
-retry=0
 
 while [ -n "$*" ]
 do
@@ -116,7 +126,7 @@ do
 	    exit 0
 	    ;;
 	--retry | -retry)
-	    _resume_opt="--resume-failed"
+            retry=1
 	    shift
 	    ;;
 	--)
@@ -146,6 +156,11 @@ if [ -z $scriptargs ]; then
     fi
 fi
 
+_resume_opt="--resume"
+if [ $retry -gt 0 ]; then
+    _resume_opt="--resume-failed"
+fi
+
 mplist=( `cat $scriptargs | xargs` )
 """
 
@@ -154,5 +169,3 @@ mplist=( `cat $scriptargs | xargs` )
         function_setup_max_njob,
         function_run_parallel,
     ]
-    
-    

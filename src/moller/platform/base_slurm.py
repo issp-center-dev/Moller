@@ -35,10 +35,7 @@ class BaseSlurm(Platform):
             sched_params.append('-J {}'.format(self.job_name))
 
         fp.write(shebang)
-        fp.write('\n'.join([ sched_key + s for s in sched_params ]) + '\n')
-        fp.write('\n')
-        fp.write('export _debug=1')
-        fp.write('\n')
+        fp.write('\n'.join([ sched_key + s for s in sched_params ]) + '\n\n')
 
     function_find_multiplicity = r"""
 function _find_multiplicity () {
@@ -108,11 +105,12 @@ export -f _setup_run_parallel
         var_list.append(r'_ncores=$SLURM_CPUS_ON_NODE')
         var_list.append(r'_multiplicity=0')
         var_list.append(r'_signature=""')
-        var_list.append(r'_resume_opt="--resume"')
         return '\n'.join(var_list) + '\n'
 
     def generate_function(self):
-        str  = self.generate_variable()
+        str = ''
+        str += ScriptFunction.function_setup_vars
+        str += self.generate_variable()
         str += self.generate_function_body()
         str += ScriptFunction.function_main
         return str
@@ -120,4 +118,3 @@ export -f _setup_run_parallel
     @classmethod
     def create(cls, info):
         return cls(info)
-
