@@ -96,8 +96,16 @@ function run_parallel () {
 	[ $_debug -eq 1 ] && echo "DEBUG: run: cmd=$_cmd, log=$_logfile, sig=$_sig2, njob=$_njob, resume=$_resume_opt"
         parallel $_resume_opt --joblog ${_logfile} -j $_njob $_cmd "$_sig2" {} {%}
     else
-        _min_nchunk=16
-        _nchunk=$(( _min_nchunk < _njob/_max_njob ? _njob/_max_njob : _min_nchunk ))
+        _k=0
+        while /bin/true
+        do
+            _t=$(( 4**_k ))
+            if [ $_njob -le $_t ]; then
+                break
+            fi
+            _k=$(( _k + 1 ))
+        done
+        _nchunk=$(( 2**_k ))
         _nway=$(( _njob % _nchunk == 0 ? _njob / _nchunk : _njob / _nchunk + 1 ))
         [ $_debug -eq 1 ] && echo "DEBUG: run nested: nchunk=${_nchunk}, nway=${_nway}, cmd=$_cmd, log=$_logfile, sig=$_sig2, resume=$_resume_opt"
         parallel --pipe --roundrobin -N $_nchunk -j $_nway --slotreplace '{X0}' \

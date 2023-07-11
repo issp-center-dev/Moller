@@ -11,7 +11,7 @@ def task(task_name, delay, fail):
 
     nthr = os.getenv("OMP_NUM_THREADS")
 
-    proclist = comm.gather(proc, root=0)
+    proclist = comm.allgather(proc)
     if rank == 0:
         proctable = {}
         for p in proclist:

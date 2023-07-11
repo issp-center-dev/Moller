@@ -15,7 +15,7 @@ class BasePBS(Platform):
 
     def parallel_command(self, info):
         #--- system dependent
-        exec_command=r'mpirun -hosts $_node -ppn 1 -np $_np -genvall'
+        exec_command=r'mpirun -np $_np -hosts $_node -ppn $_ppn -genvall'
         
         node = info.get('node', None)
         #cmd = exec_command + (r'-N {} -n {} -c {}'.format(*node))
@@ -164,6 +164,8 @@ function _setup_taskenv () {
   else
       _mask="[${_mask_table[$_slot_id]}]"
   fi
+
+  _ppn=$(( _np % _nn == 0 ? _np/_nn : _np/_nn + 1 ))
   
   export OMP_NUM_THREADS=$_nc
   export I_MPI_PIN_DOMAIN=$_mask

@@ -22,10 +22,7 @@ class Kugui(BasePBS):
             sched_params.append('-N {}'.format(self.job_name))
 
         fp.write(shebang)
-        fp.write('\n'.join([ sched_key + s for s in sched_params ]) + '\n')
-        fp.write('\n')
-        fp.write('export _debug=1')
-        fp.write('\n')
+        fp.write('\n'.join([ sched_key + s for s in sched_params ]) + '\n\n')
 
     @classmethod
     def create(cls, info):
