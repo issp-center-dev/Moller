@@ -70,7 +70,18 @@ class TaskStatus:
         for line in lines[1:]:
             items = line.split('\t')
             tbl = { a: b for a,b in zip(itemkeys, items) }
-            task_name, signature, work_item, slot_id = tbl['Command'].split()
+
+            cmditems = tbl['Command'].split()
+            if len(cmditems) == 4:
+                # single parallel
+                task_name, signature, work_item, slot_id = cmditems
+            elif len(cmditems) == 7:
+                # nested parallel
+                dummy1, task_name, signature, work_item, a, b, c = cmditems
+                slot_id = (int(a) - 1) * int(b) + int(c)
+            else:
+                raise RuntimeError("unknown format in Command field")
+
             tbl.update({'task_name': task_name, 'signature': signature, 'work_item': work_item, 'slot_id': slot_id})
             if work_item in task_table:
                 task_table[work_item].append(tbl)
