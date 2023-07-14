@@ -45,7 +45,7 @@
 
 .. code-block:: bash
 
-  $ ls -1d > list.dat
+  $ /usr/bin/ls -1d > list.dat
 
 
 網羅計算を実行する
