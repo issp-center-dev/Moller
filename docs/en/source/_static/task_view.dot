@@ -1,0 +1,41 @@
+digraph G {
+	fontname="Helvetica,Arial,sans-serif"
+	node [width=2,shape=box,fontname="Helvetica,Arial,sans-serif"]
+	edge [fontname="Helvetica,Arial,sans-serif"]
+
+	subgraph cluster_0 {
+		node [style=filled,color=white];
+		style=filled;
+		color=grey90;
+		a0 -> a1 -> a2 -> a3;
+		a0 [label = "task 1", color = "#ccccff"]
+		a1 [label = "task 2", color = "#ccffcc"]
+		a2 [label = "task 3", color = "#ffcccc"]
+		a3 [label = "task 4", color = "#ffccff"]
+		label = "job #1";
+	}
+
+	subgraph cluster_1 {
+		node [style=filled,color=white];
+		style = filled;
+		color = grey82;
+		b0 -> b1 -> b2 -> b3;
+		b0 [label = "task 1", color = "#ccccff"]
+		b1 [label = "task 2", color = "#ccffcc"]
+		b2 [label = "task 3", color = "#ffcccc"]
+		b3 [label = "task 4", color = "#ffccff"]
+		label = "job #2";
+	}
+
+	subgraph cluster_2 {
+		node [style=filled,color=white];
+		style = filled;
+		color = grey70;
+		c0 -> c1 -> c2 -> c3;
+		c0 [label = "task 1", color = "#ccccff"]
+		c1 [label = "task 2", color = "#ccffcc"]
+		c2 [label = "task 3", color = "#ffcccc"]
+		c3 [label = "task 4", color = "#ffccff"]
+		label = "job #3";
+	}
+}
