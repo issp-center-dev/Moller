@@ -18,12 +18,15 @@ class TaskSerial:
         self.setup(info)
 
     def setup(self, info):
-        if 'code' in info:
-            self.code = info['code']
-        elif 'run' in info:
-            self.code = info['run']
-        else:
+        if info is None:
             self.code = None
+        else:
+            if 'code' in info:
+                self.code = info['code']
+            elif 'run' in info:
+                self.code = info['run']
+            else:
+                self.code = None
 
     def generate(self, fp):
         logger.info('TaskSerial: name={}'.format(self.name))
@@ -38,9 +41,10 @@ class TaskParallel:
 
         self.prev_log_file = None
         self.setup(info)
-        pass
 
     def setup(self, info):
+        if info is None:
+            return
         node = info.get('node', [])
         if type(node) is list:
             if len(node) == 0:
@@ -65,8 +69,6 @@ class TaskParallel:
 
         self.code = info.get('run', '')
 
-        pass
-
     def generate(self, fp):
         logger.info('TaskParallel: name={}'.format(self.name))
 
@@ -85,10 +87,10 @@ class TaskParallel:
                 line = re.sub(r'(srun|mpirun|mpiexec)', srun_str, line)
 
                 lines_new.append(r'  [ $_debug -eq 1 ] && echo "DEBUG: $_work_item: ' + line + '"')
-                line = re.sub(r'^', '  ', line)
+                # line = re.sub(r'^', '  ', line)
                 lines_new.append(line)
             else:
-                line = re.sub(r'^', '  ', line)
+                # line = re.sub(r'^', '  ', line)
                 lines_new.append(line)
         run = '\n'.join(lines_new)
 
