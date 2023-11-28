@@ -33,7 +33,7 @@ SYNOPSIS:
 
   .. code-block:: bash
 
-    moller_status [-h] [--text|--csv|--html] [-o output_file] input_yaml [list_file]
+    moller_status [-h] [--text|--csv|--html] [--ok|--failed|--skipped|--collapsed|--yet] [-o output_file] input_yaml [list_file]
 
 DESCRIPTION:
 
@@ -62,6 +62,28 @@ DESCRIPTION:
   - ``-o``, ``--output`` ``output_file``
 
     specifies the output file name. If it is omitted, the result is written to the standard output.
+
+  - filter options
+
+    specifies the status of jobs to be displayed by one of the following options. All jobs are displayed by default.
+
+    - ``--ok``
+      displays only jobs whose tasks are all completed successfully.
+
+    - ``--failed``
+      displays jobs, any of whose tasks are failed with errors, skipped, or not performed.
+
+    - ``--skipped``
+      displays jobs, any of whose tasks are skipped.
+
+    - ``--yet``
+      displays jobs, any of whose tasks are not yet performed.
+
+    - ``--collapsed``
+      displays jobs, any of whose tasks are failed with errors.
+
+    - ``--all``
+      displays all jobs. (default)
 
   - ``-h``
 
