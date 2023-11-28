@@ -21,7 +21,7 @@ class TaskStatus:
             return lambda vv: any([v == '.' for v in vv])
         elif flt == "debug":
             return lambda vv: False
-        else:
+        else: # "all" and others
             return lambda vv: True
 
     def setup(self, info_file, list_file, flt):
@@ -251,7 +251,8 @@ def main():
     parse_filter.add_argument('--skipped', action='store_const', const='skipped', dest='filt', help='show skipped jobs')
     parse_filter.add_argument('--yet', action='store_const', const='yet', dest='filt', help='show jobs not yet started')
     parse_filter.add_argument('--collapsed', action='store_const', const='collapsed', dest='filt', help='show failed tasks')
-    # parse_filter.add_argument('--debug', action='store_const', const='debug', dest='filt', help='show no jobs')
+    parse_filter.add_argument('--all', action='store_const', const='all', dest='filt', help='show all jobs')
+    parse_filter.add_argument('--debug', action='store_const', const='debug', dest='filt', help=argparse.SUPPRESS) # show no jobs
 
     args = parser.parse_args()
 
