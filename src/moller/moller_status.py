@@ -19,7 +19,7 @@ class TaskStatus:
             return lambda vv: any([v == '-' for v in vv])
         elif flt == "yet":
             return lambda vv: any([v == '.' for v in vv])
-        elif flt == "debug":
+        elif flt == "none":
             return lambda vv: False
         else: # "all" and others
             return lambda vv: True
@@ -252,7 +252,7 @@ def main():
     parse_filter.add_argument('--yet', action='store_const', const='yet', dest='filt', help='show jobs not yet started')
     parse_filter.add_argument('--collapsed', action='store_const', const='collapsed', dest='filt', help='show failed tasks')
     parse_filter.add_argument('--all', action='store_const', const='all', dest='filt', help='show all jobs')
-    parse_filter.add_argument('--debug', action='store_const', const='debug', dest='filt', help=argparse.SUPPRESS) # show no jobs
+    parse_filter.add_argument('--none', action='store_const', const='none', dest='filt', help=argparse.SUPPRESS) # show no jobs
 
     args = parser.parse_args()
 
