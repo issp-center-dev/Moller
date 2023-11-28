@@ -34,7 +34,7 @@ moller_status
 
   .. code-block:: bash
 
-    moller_status [-h] [--text|--csv|--html] [-o output_file] input_yaml [list_file]
+    moller_status [-h] [--text|--csv|--html] [--ok|--failed|--skipped|--collapsed|--yet] [-o output_file] input_yaml [list_file]
 
 説明:
 
@@ -63,6 +63,28 @@ moller_status
   - -o, --output output_file
 
     出力先のファイル名を指定します。指定がない場合は標準出力に書き出されます。
+
+  - フィルタ
+
+    出力内容を指定します。以下のいずれかを指定できます。指定がない場合は全てのジョブの情報が出力されます。
+
+    - --ok
+      全てのタスクが完了したジョブのみを表示します。
+
+    - --failed
+      エラー、スキップまたは未実行のタスクがあるジョブを表示します。
+
+    - --skipped
+      実行をスキップしたタスクがあるジョブを表示します。
+
+    - --yet
+      未実行のタスクがあるジョブを表示します。
+
+    - --collapsed
+      エラー終了したタスクがあるジョブを表示します。
+
+    - --all
+      全てのジョブを表示します。(デフォルト)
 
   - -h
 
