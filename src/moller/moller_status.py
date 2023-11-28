@@ -3,10 +3,28 @@ import csv
 from tabulate import tabulate
 
 class TaskStatus:
-    def __init__(self, info_file, list_file=None):
-        self.setup(info_file, list_file)
+    def __init__(self, info_file, list_file=None, flt=None):
+        self.setup(info_file, list_file, self._make_filter(flt))
 
-    def setup(self, info_file, list_file):
+    def _make_filter(self, flt):
+        if flt is None:
+            return lambda vv: True
+        elif flt == "ok":
+            return lambda vv: all([v == 'o' for v in vv])
+        elif flt == "failed":
+            return lambda vv: any([v != 'o' for v in vv])
+        elif flt == "collapsed":
+            return lambda vv: any([v == 'x' for v in vv])
+        elif flt == "skipped":
+            return lambda vv: any([v == '-' for v in vv])
+        elif flt == "yet":
+            return lambda vv: any([v == '.' for v in vv])
+        elif flt == "debug":
+            return lambda vv: False
+        else:
+            return lambda vv: True
+
+    def setup(self, info_file, list_file, flt):
         taskitems = self.read_script(info_file)
 
         task_data = []
@@ -26,7 +44,7 @@ class TaskStatus:
         tbl.append(['job'] + [ task_name for task_name, job_log in task_data ])
 
         for jobitem in jobitems:
-            d = [jobitem]
+            d = []
             for task_name, job_log in task_data:
                 if jobitem in job_log:
                     x = job_log[jobitem][-1]
@@ -42,7 +60,9 @@ class TaskStatus:
                         d.append('#')
                 else:
                     d.append('.')
-            tbl.append(d)
+
+            if flt(d):
+                tbl.append([jobitem] + d)
 
         self.status_table = tbl
 
@@ -225,10 +245,17 @@ def main():
     parse_target.add_argument('--text', action='store_const', const='text', dest='mode', help='output in text format')
     parse_target.add_argument('--csv',  action='store_const', const='csv',  dest='mode', help='output in csv format')
     parse_target.add_argument('--html', action='store_const', const='html', dest='mode', help='output in html format')
+    parse_filter = parser.add_mutually_exclusive_group()
+    parse_filter.add_argument('--ok', action='store_const', const='ok', dest='filt', help='show successful jobs')
+    parse_filter.add_argument('--failed', action='store_const', const='failed', dest='filt', help='show failed jobs')
+    parse_filter.add_argument('--skipped', action='store_const', const='skipped', dest='filt', help='show skipped jobs')
+    parse_filter.add_argument('--yet', action='store_const', const='yet', dest='filt', help='show jobs not yet started')
+    parse_filter.add_argument('--collapsed', action='store_const', const='collapsed', dest='filt', help='show failed tasks')
+    # parse_filter.add_argument('--debug', action='store_const', const='debug', dest='filt', help='show no jobs')
 
     args = parser.parse_args()
 
-    status = TaskStatus(args.input_yaml, args.job_list)
+    status = TaskStatus(args.input_yaml, args.job_list, args.filt)
     status.write(args.mode, args.output_file)
 
 if __name__ == '__main__':
