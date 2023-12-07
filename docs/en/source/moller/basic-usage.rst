@@ -5,9 +5,10 @@ Installation and basic usage
 
   Comprehensive calculation utility ``moller`` included in HTP-tools requires the following programs and libraries:
 
-  - python 3.x
+  - Python 3.x
   - ruamel.yaml module
   - tabulate module
+  - GNU Parallel
 
 .. **Official pages**
 .. 
@@ -57,6 +58,7 @@ Installation and basic usage
      |	     |   |-- base.py
      |	     |   |-- base_slurm.py
      |	     |   |-- base_pbs.py
+     |	     |   |-- base_default.py
      |	     |   |-- ohtaka.py
      |	     |   |-- kugui.py
      |	     |   |-- default.py
@@ -98,3 +100,7 @@ Installation and basic usage
           $ moller_status input.yaml list.dat
 
       to obtain a report whether the calculation for each parameter set has been completed successfully.
+
+**References**
+
+[1] `O. Tange, GNU Parallel - The command-Line Power Tool, ;login: The USENIX Magazine, February 2011:42-47. <https://www.usenix.org/publications/login/february-2011-volume-36-number-1/gnu-parallel-command-line-power-tool>`_

@@ -11,4 +11,4 @@
    tutorial/index
    command/index
    filespec/index
-   appendix/index
+..   appendix/index
