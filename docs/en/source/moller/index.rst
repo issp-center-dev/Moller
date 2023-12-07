@@ -11,4 +11,4 @@ Comprehensive Calculation Utility (moller)
    tutorial/index
    command/index
    filespec/index
-   appendix/index
+..   appendix/index

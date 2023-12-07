@@ -5,9 +5,10 @@
 
   HTP-tools に含まれる網羅計算ツール moller を利用するには、以下のプログラムとライブラリが必要です。
 
-  - python 3.x
+  - Python 3.x
   - ruamel.yaml モジュール
   - tabulate モジュール
+  - GNU Parallel
 
 **ソースコード配布サイト**
 
@@ -42,6 +43,7 @@
      |-- pyproject.toml
      |-- docs/
      |   |-- ja/
+     |   |-- en/
      |   |-- tutorial/
      |-- src/
      |   |-- moller/
@@ -52,6 +54,7 @@
      |	     |   |-- base.py
      |	     |   |-- base_slurm.py
      |	     |   |-- base_pbs.py
+     |	     |   |-- base_default.py
      |	     |   |-- ohtaka.py
      |	     |   |-- kugui.py
      |	     |   |-- default.py
@@ -96,3 +99,6 @@
 
       を実行すると、各パラメータセットについて計算が正常に終了したかどうかを集計したレポートが出力されます。
 
+**参考文献**
+
+[1] `O. Tange, GNU Parallel - The command-Line Power Tool, ;login: The USENIX Magazine, February 2011:42-47. <https://www.usenix.org/publications/login/february-2011-volume-36-number-1/gnu-parallel-command-line-power-tool>`_

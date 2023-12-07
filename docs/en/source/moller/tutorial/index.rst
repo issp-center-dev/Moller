@@ -13,11 +13,20 @@ Prepare job description file
 A job description file describes the content of calculations that are carried out in a batch job.
 Here, a *batch job* is used for a set of instructions submitted to job schedulers running on supercomputer systems. On the other hand, for the concurrent execution of programs that ``moller`` handles, we call a series of program executions performed for one set of parameters by a *job*. A job may consist of several contents that we call *tasks*. ``moller`` organizes job execution so that each task is run in parallel, and the synchronization between the jobs is taken at every start and end of the tasks.
 
-.. figure:: ../../_static/task_view.png
-   :scale: 50%
-   :alt: Tasks and jobs
+.. only:: html
 
-   An example of tasks and jobs: Three jobs #1 ... #3 are carried out within a single batch job. Each job corresponds to different set of parameters. A job consists of 4 tasks. Each task is run in parallel among these three jobs.
+  .. figure:: ../../_static/task_view.png
+     :alt: Tasks and jobs
+
+     An example of tasks and jobs: Three jobs #1 ... #3 are carried out within a single batch job. Each job corresponds to different set of parameters. A job consists of 4 tasks. Each task is run in parallel among these three jobs.
+
+.. only:: latex
+
+  .. figure:: ../../_static/task_view.pdf
+     :scale: 100%
+     :alt: Tasks and jobs
+
+     An example of tasks and jobs: Three jobs #1 ... #3 are carried out within a single batch job. Each job corresponds to different set of parameters. A job consists of 4 tasks. Each task is run in parallel among these three jobs.
 
 An example of job description file is presented in the following. A job description file is in text-based YAML format. It contains parameters concerning the platform and the batch job, task descriptions, and pre/post-processes. See :ref:`File format <sec-fileformat>` section for the details.
 
@@ -46,6 +55,14 @@ A list of jobs is to be created. ``moller`` is designed so that each job is exec
 .. code-block:: bash
 
   $ /usr/bin/ls -1d > list.dat
+
+In this tutorial, an utility script ``make_inputs.sh`` is enclosed which generates datasets and a list file.
+  
+.. code-block:: bash
+
+  $ bash ./make_inputs.sh
+
+By running the above command, a directory ``output`` and a set of subdirectories ``dataset-0001`` ... ``dataset-0020`` that correspond to datasets, and a list file ``list.dat`` are created.
 
 
 Run batch job
