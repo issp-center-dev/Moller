@@ -5,38 +5,23 @@ from .utils import *
 import logging
 logger = logging.getLogger(__name__)
 
-class BaseSlurm(Platform):
+class BaseDefault(Platform):
     def __init__(self, info):
         super().__init__(info)
         self.setup(info)
 
     def setup(self, info):
-        super().batch_queue_setup(info)
+        pass
 
     def parallel_command(self, info):
-        #--- system dependent
-        exec_command=r'srun --exclusive -N $_nn -n $_np -c $_nc'
-        
-        node = info.get('node', None)
-        #cmd = exec_command + (r'-N {} -n {} -c {}'.format(*node))
-        cmd = exec_command
-        return cmd
+        return ""
 
     def generate_header(self, fp):
         shebang = '#!/bin/bash\n'
-
-        sched_key = '#SBATCH '
-
-        sched_params = []
-        sched_params.append('-p {}'.format(self.queue))
-        sched_params.append('-N {}'.format(self.nnode))
-        sched_params.append('-t {}'.format(convert_seconds_to_hhmmss(self.elapsed)))
-        if self.job_name is not None:
-            sched_params.append('-J {}'.format(self.job_name))
-
         fp.write(shebang)
-        fp.write('\n'.join([ sched_key + s for s in sched_params ]) + '\n\n')
-        fp.write('export _debug=0\n\n')
+        fp.write('\n')
+        fp.write('export _debug=1\n')
+        fp.write('\n')
 
     function_find_multiplicity = r"""
 function _find_multiplicity () {
@@ -93,17 +78,92 @@ function _setup_run_parallel () {
 export -f _setup_run_parallel
     """
 
+    function_main = r"""
+#--- initialize
+_setup_max_njob
+
+#--- parse options
+initargs="$@"
+scriptargs=""
+retry=0
+
+while [ -n "$*" ]
+do
+    case "$1" in
+	-h | --help | -help)
+	    echo $0 [--retry] listfile [...]
+	    exit 0
+	    ;;
+	--retry | -retry)
+            retry=1
+	    shift
+	    ;;
+	--node | -node)
+            _nnodes=$2
+            shift
+	    shift
+	    ;;
+	--core | -core)
+            _ncores=$2
+            shift
+	    shift
+	    ;;
+	--)
+	    shift
+	    break
+	    ;;
+	-*)
+	    echo "unknown option: $1"
+	    exit 1
+	    ;;
+	*)
+	    scriptargs="$scriptargs $1"
+	    shift
+	    ;;
+    esac
+done
+
+if [ $_nnodes -eq 0 ]; then
+    _nnodes=1
+fi
+
+if [ $_ncores -eq 0 ]; then
+    _ncores=`nproc`
+fi
+
+[ $_debug -eq 1 ] && echo "DEBUG: nnodes=$_nnodes, ncores=$_ncores"
+
+if [ -z $scriptargs ]; then
+    #echo "no listfile specified"
+    #exit 0
+    if [ -e "list.dat" ]; then
+	echo "no listfile specified. assume default: list.dat"
+	scriptargs="list.dat"
+    else
+	echo "no listfile specified. stop."
+	exit 0
+    fi
+fi
+
+_resume_opt="--resume"
+if [ $retry -gt 0 ]; then
+    _resume_opt="--resume-failed"
+fi
+
+mplist=( `cat $scriptargs | xargs` )
+"""
+
     def generate_function_body(self):
         flist = ScriptFunction.function_defs
         flist.append(self.function_find_multiplicity)
         flist.append(self.function_setup_taskenv)
         flist.append(self.function_setup_run_parallel)
         return ''.join(flist)
-        
+
     def generate_variable(self):
         var_list = []
-        var_list.append(r'_nnodes=$SLURM_NNODES')
-        var_list.append(r'_ncores=$SLURM_CPUS_ON_NODE')
+        var_list.append(r'_nnodes={}'.format(self.nnode))
+        var_list.append(r'_ncores={}'.format(self.ncore))
         var_list.append(r'_multiplicity=0')
         var_list.append(r'_signature=""')
         return '\n'.join(var_list) + '\n'
@@ -113,9 +173,9 @@ export -f _setup_run_parallel
         str += ScriptFunction.function_setup_vars
         str += self.generate_variable()
         str += self.generate_function_body()
-        str += ScriptFunction.function_main
+        str += self.function_main
         return str
-        
+
     @classmethod
     def create(cls, info):
         return cls(info)
