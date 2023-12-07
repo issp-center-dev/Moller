@@ -6,10 +6,6 @@ class ScriptFunction:
         pass
 
     function_setup_vars = r"""
-export _debug=1
-
-retry=0
-
 """
 
     function_is_ready = r"""
@@ -125,6 +121,7 @@ _setup_max_njob
 #--- parse options
 initargs="$@"
 scriptargs=""
+retry=0
 
 while [ -n "$*" ]
 do

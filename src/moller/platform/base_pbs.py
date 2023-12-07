@@ -36,6 +36,7 @@ class BasePBS(Platform):
 
         fp.write(shebang)
         fp.write('\n'.join([ sched_key + s for s in sched_params ]) + '\n\n')
+        fp.write('export _debug=0\n\n')
 
     function_find_multiplicity = r"""
 function _gen_mask () {
