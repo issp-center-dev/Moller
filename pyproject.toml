@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "HTP-tools"
-version = "0.1-dev"
+name = "HTP-tools-moller"
+version = "1.0-beta"
 description = "High-ThroughtPut calculation tools"
 authors = ["HTP-tools developers <htp-tools-dev@issp.u-tokyo.ac.jp>"]
 license = "GPL-3.0-or-later"
 
 readme = "README.md"
-repository = "https://github.com/issp-center-dev/HTP-tools-dev"
+repository = "https://github.com/issp-center-dev/Moller"
 
 packages = [
   { include = "moller", from = "src" }
