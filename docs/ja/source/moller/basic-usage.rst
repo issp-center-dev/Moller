@@ -12,7 +12,7 @@
 
 **ソースコード配布サイト**
 
-  - `GitHubリポジトリ <https://github.com/issp-center-dev/HTP-tools-dev>`_
+  - `GitHubリポジトリ <https://github.com/issp-center-dev/Moller>`_
 
 **ダウンロード方法**
 
@@ -20,7 +20,7 @@
 
   .. code-block:: bash
 
-    $ git clone git@github.com:issp-center-dev/HTP-tools-dev.git
+    $ git clone https://github.com/issp-center-dev/Moller.git
 
 **インストール方法**
 

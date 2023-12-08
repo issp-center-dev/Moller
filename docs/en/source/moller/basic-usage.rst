@@ -10,22 +10,18 @@ Installation and basic usage
   - tabulate module
   - GNU Parallel
 
-.. **Official pages**
-.. 
-..   - `GitHub repository <https://github.com/issp-center-dev/HTP-tools-dev>`_
+**Official pages**
 
-.. **Downloads**
-.. 
-..   HTP-tools can be downloaded by the following command with git:
-.. 
-..   .. code-block:: bash
-.. 
-..    $ git clone git@github.com:issp-center-dev/HTP-tools-dev.git
+  - `GitHub repository <https://github.com/issp-center-dev/Moller>`_
 
 **Downloads**
 
-  *The source package is not yet publicly available.*
-   
+  HTP-tools can be downloaded by the following command with git:
+
+  .. code-block:: bash
+
+    $ git clone https://github.com/issp-center-dev/Moller.git
+
 **Installation**
 
   Once the source files are obtained, you can install HTP-tools by running the following command. The required libraries will also be installed automatically at the same time.
