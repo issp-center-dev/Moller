@@ -2,12 +2,22 @@
 Introduction
 ****************************************************************
 
-What is moller?
+What is HTP-tools?
 ----------------------------------------------------------------
 
-moller is provided as part of the HTP-Tools package, designed to support high-throughput computations.
-It is a tool for generating batch job scripts for supercomputers and clusters, allowing parallel execution of programs under a series of computational conditions, such as parameter parallelism.
-Currently, it supports the supercomputers ohtaka (using the slurm job scheduler) and kugui (using the PBS job scheduler) provided by the Institute for Solid State Physics, University of Tokyo.
+In recent years, the use of machine learning for predicting material properties and designing substances (known as materials informatics) has gained considerable attention.
+The accuracy of machine learning depends heavily on the preparation of appropriate training data.
+Therefore, the development of tools and environments for the rapid generation of training data is expected to contribute significantly to the advancement of research in materials informatics.
+
+HTP-Tools is a package which is specifically designed to support high throughput computations.
+It includes 'moller', a scripting tool for managing large-scale computations on supercomputers and clusters, and 'cif2x', which generates input files for first-principles calculations from cif files.
+cif2x is compatible with `VASP <https://www.vasp.at>`_ , `Quantum ESPRESSO  <https://www.quantum-espresso.org>`_ , and `OpenMX <http://www.openmx-square.org>`_
+with future support for `AkaiKKR <http://kkr.issp.u-tokyo.ac.jp>`_ planned.
+In addition, cif2x allows the generation of multiple input files tailored to specific computational conditions.
+
+Using HTP tools, researchers can easily perform a large number of first-principles calculations on high-performance computers.
+In the future, there are plans to develop tools that are compatible with various simulation software,
+such as solvers for quantum lattice models, to further enrich the environment for generating training data for machine learning.
 
 License
 ----------------------------------------------------------------
