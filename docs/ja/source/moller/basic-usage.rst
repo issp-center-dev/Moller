@@ -16,7 +16,7 @@
 
 **ダウンロード方法**
 
-  gitを利用できる場合は、以下のコマンドでHTP-toolsをダウンロードできます。
+  gitを利用できる場合は、以下のコマンドでmollerをダウンロードできます。
 
   .. code-block:: bash
 
@@ -24,11 +24,11 @@
 
 **インストール方法**
 
-  HTP-toolsをダウンロード後、以下のコマンドを実行してインストールします。HTP-toolsが利用するライブラリも必要に応じてインストールされます。
+  mollerをダウンロード後、以下のコマンドを実行してインストールします。mollerが利用するライブラリも必要に応じてインストールされます。
 
   .. code-block:: bash
 
-     $ cd ./HTP-tools-dev
+     $ cd ./Moller
      $ python3 -m pip install .
 
   実行プログラム ``moller`` および ``moller_status`` がインストールされます。

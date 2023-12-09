@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'HTP-tools Moller Users Guide'
+project = 'Moller Users Guide'
 copyright = '2023-, The University of Tokyo'
 author = 'HTP-tools development team'
 
@@ -136,8 +136,8 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     ('index',
-     'HTP-tools-usersguide.tex',
-     'HTP-tools Documentation',
+     'moller-usersguide.tex',
+     'Moller Documentation',
      'ISSP, University of Tokyo',
      'manual',
      'True'),

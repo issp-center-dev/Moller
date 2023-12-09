@@ -16,7 +16,7 @@ Installation and basic usage
 
 **Downloads**
 
-  HTP-tools can be downloaded by the following command with git:
+  moller can be downloaded by the following command with git:
 
   .. code-block:: bash
 
@@ -24,11 +24,11 @@ Installation and basic usage
 
 **Installation**
 
-  Once the source files are obtained, you can install HTP-tools by running the following command. The required libraries will also be installed automatically at the same time.
+  Once the source files are obtained, you can install moller by running the following command. The required libraries will also be installed automatically at the same time.
 
   .. code-block:: bash
 
-     $ cd ./HTP-tools-dev
+     $ cd ./Moller
      $ python3 -m pip install .
 
   The executable files ``moller`` and ``moller_status`` will be installed.

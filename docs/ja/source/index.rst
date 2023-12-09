@@ -10,7 +10,6 @@ HTP-tools Users Guide
    :maxdepth: 2
    :caption: Contents:
 
-   about/index
    moller/index
 
 .. Indices and tables
