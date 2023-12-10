@@ -93,7 +93,8 @@ Parameters can be passed to the script as additional arguments; the name of list
 
   $ sbatch job.sh list.dat
 
-If the list file is not specified, ``list.dat`` is used by default.
+Files named 'result.txt' will be generated in each directory listed on the list.dat.
+You can confirm that the 'result.txt' contains the strings 'hello world.' and 'hello world again.' as the job results.
 
 Check status
 ----------------------------------------------------------------

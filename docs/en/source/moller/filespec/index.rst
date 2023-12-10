@@ -103,6 +103,6 @@ jobs
 List file
 ----------------------------------------------------------------
 
-This file contains a list of jobs. It is a text file with a job name in a line.
+This file contains a list of jobs. It is a text file with a job name in a line (The name of the directory is associated with the name of the job).
 
-``moller`` assumes that a directory is assigned to each job, and the tasks of the job are executed within the directory. These directories are supposed to be located in the directory where the batch job is submitted. The name of the directory is associated with the name of the job.
+``moller`` assumes that a directory is assigned to each job, and the tasks of the job are executed within the directory. These directories are supposed to be located in the directory where the batch job is submitted.
