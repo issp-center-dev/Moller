@@ -135,7 +135,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    ('index',
+    ('moller/index',
      'moller-usersguide.tex',
      'Moller Documentation',
      'ISSP, University of Tokyo',
