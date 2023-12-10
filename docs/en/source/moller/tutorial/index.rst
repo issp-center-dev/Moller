@@ -35,19 +35,24 @@ An example of job description file is presented in the following. A job descript
 
 In the platform section, you can specify the type of platform on which to execute.
 In this case, settings for the System B (ohtaka) are being made.
+
 The prologue section describes the preprocessing of the batch job.
 It details the common command line to be executed before running the task.
+
 In the jobs section, the content of the task processing is described.
 The series of tasks to be executed in the job are described in a table format,
 with the task name as the key and the processing content as the value.
 In this example, a task that first outputs "start..." is defined with the task name "start."
-Here, it is set to "parallel = false." In this case, it will be executed as follows...
+Here, it is set to "parallel = false."
+In this case, the jobs are executed sequentially.
 Next, a task that outputs "hello world." is defined with the task name "hello world." .
 Here, since "parallel" is not set, it is executed as "parallel = true." .
-In this case, it will be executed as follows...
+In this case, parallel processing is performed on a per-job basis.
 Similarly, next, a task that outputs "hello world again." is defined with the task name "hello world again."
+
 Finally, in the epilogue section, the post-processing of the batch job is described.
 It details the common command line to be executed after running the task.
+
 For more details on the specifications, please refer to the chapter :ref:`File Format <sec-fileformat>`.
 
 Generate batch job script
