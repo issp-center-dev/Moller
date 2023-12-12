@@ -8,6 +8,15 @@ class ScriptFunction:
     function_setup_vars = r"""
 """
 
+    function_debug = r"""
+function DEBUG () {
+    if [ $_debug -gt 0 ]; then
+        echo "DEBUG:" $@
+    fi
+}
+export -f DEBUG
+"""
+
     function_is_ready = r"""
 function _is_ready () {
     item_=$1
@@ -15,21 +24,21 @@ function _is_ready () {
     if [ ! -e $logfile_ ]; then
         l_=`ls ${logfile_}.[0-9]* 2> /dev/null`
         if [ -z "$l_" ]; then
-            [ $_debug -eq 1 ] && echo "DEBUG: $item_: logfile $logfile_ not found"
+            DEBUG "$item_: logfile $logfile_ not found"
             return 1
         fi
         logfile_=${l_}
     fi
     status=`grep -h '\b'$item_'\b' $logfile_ | tail -1 | awk '{print $7}'`
     if [ -z "$status" ]; then
-	[ $_debug -eq 1 ] && echo "DEBUG: $item_: status not found"
+	DEBUG "$item_: status not found"
         return 1
     fi
     if [ $status = 0 ]; then
-	[ $_debug -eq 1 ] && echo "DEBUG: $item_: status ok. lets proceed"
+	DEBUG "$item_: status ok. lets proceed"
         return 0
     else
-	[ $_debug -eq 1 ] && echo "DEBUG: $item_: status not ready"
+	DEBUG "$item_: status not ready"
         return 1
     fi
 }
@@ -45,20 +54,20 @@ function _setup_max_njob () {
     _limit_openfiles=`ulimit -Hn`
     if [ $_num_openfiles -ge $_req_openfiles ]; then
         :
-	[ $_debug -eq 1 ] && echo "DEBUG: setup_max_njob: num_openfiles already satisfied"
+	DEBUG "setup_max_njob: num_openfiles already satisfied"
     elif [ $_req_openfiles -le $_limit_openfiles ]; then
         ulimit -n $_req_openfiles
-	[ $_debug -eq 1 ] && echo "DEBUG: setup_max_njob: num_openfiles set to $_req_openfiles"
+	DEBUG "setup_max_njob: num_openfiles set to $_req_openfiles"
     else
         ulimit -n $_limit_openfiles
-	[ $_debug -eq 1 ] && echo "DEBUG: setup_max_njob: num_openfiles set to upper limit $_limit_openfiles"
+	DEBUG "setup_max_njob: num_openfiles set to upper limit $_limit_openfiles"
     fi
     _num_openfiles=`ulimit -n`
     _limit_njob=$(( ((_num_openfiles - 16) / 4) /10*9 ))
     if [ $_max_njob -gt $_limit_njob ]; then
         _max_njob=$_limit_njob
     fi
-    [ $_debug -eq 1 ] && echo "DEBUG: max_njob=$_max_njob"
+    DEBUG "max_njob=$_max_njob"
 }
     """
 
@@ -71,7 +80,7 @@ function _run_parallel_task () {
     _w0=$5
     _x1=$6
     _slot_id=$(( 1+(_x1-1)+_w0*(_x0-1) ))
-    [ $_debug -eq 1 ] && echo "DEBUG: run task: $_cmd $_arg $_sig x0=$_x0, w0=$_w0, x1=$_x1, slot=$_slot_id"
+    DEBUG "run task: $_cmd $_arg $_sig x0=$_x0, w0=$_w0, x1=$_x1, slot=$_slot_id"
     $_cmd $_sig $_arg $_slot_id
 }
 export -f _run_parallel_task
@@ -89,7 +98,7 @@ function run_parallel () {
     _setup_run_parallel
 
     if [ $_njob -le $_max_njob ]; then
-	[ $_debug -eq 1 ] && echo "DEBUG: run: cmd=$_cmd, log=$_logfile, sig=$_sig2, njob=$_njob, resume=$_resume_opt"
+	DEBUG "run: cmd=$_cmd, log=$_logfile, sig=$_sig2, njob=$_njob, resume=$_resume_opt"
         parallel $_resume_opt --joblog ${_logfile} -j $_njob $_cmd "$_sig2" {} {%}
     else
         _k=0
@@ -103,7 +112,7 @@ function run_parallel () {
         done
         _nchunk=$(( 2**_k ))
         _nway=$(( _njob % _nchunk == 0 ? _njob / _nchunk : _njob / _nchunk + 1 ))
-        [ $_debug -eq 1 ] && echo "DEBUG: run nested: nchunk=${_nchunk}, nway=${_nway}, cmd=$_cmd, log=$_logfile, sig=$_sig2, resume=$_resume_opt"
+        DEBUG "run nested: nchunk=${_nchunk}, nway=${_nway}, cmd=$_cmd, log=$_logfile, sig=$_sig2, resume=$_resume_opt"
         parallel --pipe --roundrobin -N $_nchunk -j $_nway --slotreplace '{X0}' \
              parallel -j $_nchunk \
                  $_resume_opt --joblog ${_logfile}.{X0} \
@@ -170,6 +179,7 @@ mplist=( `cat $scriptargs | xargs` )
 """
 
     function_defs = [
+        function_debug,
         function_is_ready,
         function_setup_max_njob,
         function_run_parallel,

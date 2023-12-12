@@ -170,7 +170,7 @@ function _setup_taskenv () {
   
   export OMP_NUM_THREADS=$_nc
   export I_MPI_PIN_DOMAIN=$_mask
-  [ $_debug -eq 1 ] && echo "DEBUG: $_work_item: host=$_node mask=$_mask nthr=$_nc"
+  DEBUG "$_work_item: host=$_node mask=$_mask nthr=$_nc"
 }
 export -f _setup_taskenv
     """
@@ -201,8 +201,16 @@ export -f _setup_run_parallel
         var_list.append(r'declare -a _mask_table=()')
         var_list.append(r'_signature=""')
         var_list.append(r'export _enable_mask=0')
-        var_list.append(r'[ $_debug -eq 1 ] && echo "DEBUG: nodefile=$PBS_NODEFILE" && echo "DEBUG: nodes=${_nodes[@]}" && echo "DEBUG: cores=$_ncores"')
-        return '\n'.join(var_list) + '\n'
+        str = '\n'.join(var_list) + '\n'
+
+        str += r"""
+if [ $_debug -gt 0 ]; then
+    echo "DEBUG: nodefile=$PBS_NODEFILE"
+    echo "DEBUG: nodes=${_nodes[@]}"
+    echo "DEBUG: cores=$_ncores"
+fi
+ """
+        return str
 
     def generate_function(self):
         str = ''

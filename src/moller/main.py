@@ -86,7 +86,7 @@ class TaskParallel:
             if re.match(r'(srun|mpirun|mpiexec)', line):
                 line = re.sub(r'(srun|mpirun|mpiexec)', srun_str, line)
 
-                lines_new.append(r'  [ $_debug -eq 1 ] && echo "DEBUG: $_work_item: ' + line + '"')
+                lines_new.append(r'  DEBUG "$_work_item: ' + line + '"')
                 # line = re.sub(r'^', '  ', line)
                 lines_new.append(line)
             else:

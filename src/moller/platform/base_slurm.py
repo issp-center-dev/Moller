@@ -55,12 +55,12 @@ function _find_multiplicity () {
             _q=$(( _p / _np ))
             _w=$(( _nnodes * _q ))
 	    _s="1,$_np,$_nc"
-	    [ $_debug -eq 1 ] && echo "DEBUG: multiplicity: pack into single node: $_q procs, $_w tasks"
+	    DEBUG "multiplicity: pack into single node: $_q procs, $_w tasks"
         else
             _r=$(( _np % _p == 0 ?  _np / _p : _np / _p + 1 ))
             _w=$(( _nnodes / _r ))
 	    _s="$_r,$_np,$_nc"
-	    [ $_debug -eq 1 ] && echo "DEBUG: multiplicity: requires $_r nodes. $_w tasks"
+	    DEBUG "multiplicity: requires $_r nodes. $_w tasks"
         fi
     else
         _v1=$(( _np * _nc ))
@@ -71,11 +71,11 @@ function _find_multiplicity () {
         fi
         _w=$(( _nnodes / _nn ))
 	_s=$_sig
-	[ $_debug -eq 1 ] && echo "DEBUG: multiplicity: nodes specified. $_w tasks"
+	DEBUG "multiplicity: nodes specified. $_w tasks"
     fi
     _multiplicity=$_w
     _signature=$_s
-    [ $_debug -eq 1 ] && echo "DEBUG: multiplicity: mult=$_multiplicity, sig=$_signature"
+    DEBUG "multiplicity: mult=$_multiplicity, sig=$_signature"
 }
     """
 
