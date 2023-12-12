@@ -2,7 +2,6 @@ import subprocess
 import os
 
 from dsqss.dla_pre import dla_pre
-from dsqss.result import Results
 
 
 lattice = {"lattice": "hypercubic", "dim": 1, "L": 8}
@@ -19,7 +18,7 @@ os.chdir("output")
 f_list = open("list.dat", "w")
 for M in Ms:
     for L in Ls:
-        for i, T in enumerate(Ts):
+        for T in Ts:
             lattice["L"] = L
             hamiltonian["M"] = M
             parameter["beta"] = 1.0 / T
