@@ -2,9 +2,9 @@
 
 ## What's this sample?
 
-This is an example of `moller` with [HPhi](https://github.com/issp-center-dev/HPhi), which is an open-source software package for performing the exact diagonalization method for quantum many-body problem.
-In this example, we will calculate the sysmtem size dependence of the excitation gap $\Delta$ of the $S=1/2$ (`2S_1` directory) and $S=1$ (`2S_2`) antiferromagnetic Heisenberg chain under the periodic boundary condition.
-By using `moller`, calculations with different systems sizes are performed in parallel.
+This is an example of `moller` with [HPhi](https://github.com/issp-center-dev/HPhi), which is an open-source software package for performing the exact diagonalization method for quantum many-body problems.
+In this example, we will calculate the system size dependence of the excitation gap $\Delta$ of the $S=1/2$ (`2S_1` directory) and $S=1$ (`2S_2`) antiferromagnetic Heisenberg chain under the periodic boundary condition.
+By using `moller`, calculations with different system sizes are performed in parallel.
 This is corresponding to [section 1.4](https://issp-center-dev.github.io/HPhi/manual/develop/tutorial/en/html/zero_temperature/spin_chain.html) of the official tutorial.
 
 ## Preparation
@@ -22,7 +22,7 @@ In this tutorial, the calculation will be performed using the supercomputer syst
     $ bash ./make_inputs.sh
     ```
 
-    Working directories `L_8`, `L_10`, ..., `L_24` (upto `L_18` for `2S_2`)) will be generated.
+    Working directories `L_8`, `L_10`, ..., `L_24` (up to `L_18` for `2S_2`)) will be generated.
     A list of the directories is written to a file `list.dat`.
     Additionally, a shell script, `extract_gap.sh`, to gather energy gaps from working directories is generated.
 
@@ -54,7 +54,7 @@ In this tutorial, the calculation will be performed using the supercomputer syst
 
 5. Gather results
 
-    Once calculation finishes, gather energy gaps from jobs as
+    Once the calculation finishes, gather energy gaps from jobs as
 
     ```bash
     $ bash extract_gap.sh
@@ -65,15 +65,11 @@ In this tutorial, the calculation will be performed using the supercomputer syst
     To visualize the results, a Gnuplot file `gap.plt` is available.
     In this file, the obtained gap data are fitted by the expected curves,
 
-    $$
-    \Delta(L; S=1/2) = \Delta_\infty + A/L
-    $$
+    $$\Delta(L; S=1/2) = \Delta_\infty + A/L$$
 
     and
 
-    $$
-    \Delta(L; S=1) = \Delta_\infty + B\exp(-CL).
-    $$
+    $$\Delta(L; S=1) = \Delta_\infty + B\exp(-CL).$$
 
     The resulting plot is obtained as follows:
 
@@ -83,5 +79,5 @@ In this tutorial, the calculation will be performed using the supercomputer syst
 
     ![Finite size effect of spin gap](gap.png)
 
-    Note that the logarithmic correction causes that the spin gap for $S=1/2$ remains finite.
+    Note that the logarithmic correction causes the spin gap for $S=1/2$ to remain finite.
     On the other hand, for $S=1$, the extrapolated value $\Delta_\infty = 0.417(1)$ is consistent with the previous results, e.g., $\Delta_\infty = 0.41048(6)$ by QMC (Todo and Kato, PRL **87**, 047203 (2001)).
