@@ -34,8 +34,6 @@ In this tutorial, the calculation will be performed using the supercomputer syst
     $ moller -o job.sh input.yaml
     ```
 
-    Then, copy `job.sh` in the `output` directory, and change directory to `output`.
-
 3. Run batch job
 
     Submit a batch job with the job list as an argument.
@@ -71,7 +69,7 @@ In this tutorial, the calculation will be performed using the supercomputer syst
 
     $$\Delta(L; S=1) = \Delta_\infty + B\exp(-CL).$$
 
-    The resulting plot is obtained as follows:
+    The result is plotted as follows:
 
     ```bash
     $ gnuplot --persist gap.plt
