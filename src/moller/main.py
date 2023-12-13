@@ -64,7 +64,7 @@ class TaskParallel:
         self.node = node
 
         self.func_name = 'task_{}'.format(self.name)
-        self.log_file = 'log_{}.dat'.format(self.name)
+        self.log_file = 'stat_{}.dat'.format(self.name)
         self.prev_log_file = info.get('prev_log_file', None)
 
         self.code = info.get('run', '')
