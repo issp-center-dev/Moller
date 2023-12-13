@@ -29,7 +29,10 @@ class BasePBS(Platform):
 
         sched_params = []
         sched_params.append('-q {}'.format(self.queue))
-        sched_params.append('-l select={}'.format(self.nnode))
+        if self.ncore is not None:
+            sched_params.append('-l select={}:ncpus={}'.format(self.nnode, self.ncore))
+        else:
+            sched_params.append('-l select={}'.format(self.nnode))
         sched_params.append('-l walltime={}'.format(convert_seconds_to_hhmmss(self.elapsed)))
         if self.job_name is not None:
             sched_params.append('-N {}'.format(self.job_name))
@@ -37,6 +40,7 @@ class BasePBS(Platform):
         fp.write(shebang)
         fp.write('\n'.join([ sched_key + s for s in sched_params ]) + '\n\n')
         fp.write('export _debug=0\n\n')
+        fp.write('cd $PBS_O_WORKDIR\n\n')
 
     function_find_multiplicity = r"""
 function _gen_mask () {
