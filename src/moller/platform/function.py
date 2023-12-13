@@ -29,7 +29,7 @@ function _is_ready () {
         fi
         logfile_=${l_}
     fi
-    status=`grep -h '\b'$item_'\b' $logfile_ | tail -1 | awk '{print $7}'`
+    status=`grep -h '\s'$item_'\s' $logfile_ | tail -1 | awk '{print $7}'`
     if [ -z "$status" ]; then
 	DEBUG "$item_: status not found"
         return 1
