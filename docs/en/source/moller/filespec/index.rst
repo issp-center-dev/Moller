@@ -44,7 +44,11 @@ platform
 
   ``node``
 
-    specifies the number of nodes to be used. It is given by an integer specifying the number of nodes, or a list of integers specifying ``[`` number of nodes, number of processes per node, number of cores per process ``]``. The accepted range of parameters depends on the system and queue settings.
+    specifies the number of nodes to be used. It is given by an integer specifying the number of nodes, or a list of integers specifying ``[`` number of nodes, number of cores per node ``]``. The accepted range of parameters depends on the system and queue settings. (The number of cores is accepted for kugui and default systems; otherwise it is ignored.)
+
+  ``core``
+
+    specifies the number of cores per node be used. The accepted range of parameters depends on the system and queue settings. If both the second parameter of ``node`` and ``core`` are specified, the value in ``core`` is used. (This parameter is accepted for kugui and default target systems.)
 
   ``elapsed``
 
