@@ -8,6 +8,10 @@ logger = logging.getLogger(__name__)
 class Pbs(BasePBS):
     def __init__(self, info):
         super().__init__(info)
+        # check
+        if self.ncore is None:
+            logger.error("number of cores per node not specified.")
+            raise ValueError("number of cores per node not specified")
 
     @classmethod
     def create(cls, info):
