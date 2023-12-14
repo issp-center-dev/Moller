@@ -7,8 +7,9 @@ Comprehensive Calculation Utility (moller)
    :maxdepth: 2
    :numbered: 2
 
+   about/index
    basic-usage
    tutorial/index
    command/index
    filespec/index
-   appendix/index
+..   appendix/index

@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'HTP-tools Users Guide'
+project = 'Moller Users Guide'
 copyright = '2023-, The University of Tokyo'
 author = 'HTP-tools development team'
 
@@ -26,9 +26,9 @@ author = 'HTP-tools development team'
 # built documents.
 #
 # The short X.Y version.
-version = '0.1'
+version = '1.0-beta'
 # The full version, including alpha/beta/rc tags
-release = '0.1-dev'
+release = '1.0-beta'
 
 
 # -- General configuration ---------------------------------------------------
@@ -135,9 +135,9 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    ('index',
-     'HTP-tools-usersguide.tex',
-     'HTP-tools Documentation',
+    ('moller/index',
+     'moller-usersguide.tex',
+     'Moller Documentation',
      'ISSP, University of Tokyo',
      'manual',
      'True'),

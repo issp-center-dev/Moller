@@ -5,33 +5,30 @@ Installation and basic usage
 
   Comprehensive calculation utility ``moller`` included in HTP-tools requires the following programs and libraries:
 
-  - python 3.x
+  - Python 3.x
   - ruamel.yaml module
   - tabulate module
+  - GNU Parallel (It must be installed on servers or compute nodes on which the job script is executed.)
 
-.. **Official pages**
-.. 
-..   - `GitHub repository <https://github.com/issp-center-dev/HTP-tools-dev>`_
+**Official pages**
 
-.. **Downloads**
-.. 
-..   HTP-tools can be downloaded by the following command with git:
-.. 
-..   .. code-block:: bash
-.. 
-..    $ git clone git@github.com:issp-center-dev/HTP-tools-dev.git
+  - `GitHub repository <https://github.com/issp-center-dev/Moller>`_
 
 **Downloads**
 
-  *The source package is not yet publicly available.*
-   
-**Installation**
-
-  Once the source files are obtained, you can install HTP-tools by running the following command. The required libraries will also be installed automatically at the same time.
+  moller can be downloaded by the following command with git:
 
   .. code-block:: bash
 
-     $ cd ./HTP-tools-dev
+    $ git clone https://github.com/issp-center-dev/Moller.git
+
+**Installation**
+
+  Once the source files are obtained, you can install moller by running the following command. The required libraries will also be installed automatically at the same time.
+
+  .. code-block:: bash
+
+     $ cd ./Moller
      $ python3 -m pip install .
 
   The executable files ``moller`` and ``moller_status`` will be installed.
@@ -57,8 +54,10 @@ Installation and basic usage
      |	     |   |-- base.py
      |	     |   |-- base_slurm.py
      |	     |   |-- base_pbs.py
+     |	     |   |-- base_default.py
      |	     |   |-- ohtaka.py
      |	     |   |-- kugui.py
+     |	     |   |-- pbs.py
      |	     |   |-- default.py
      |	     |   |-- function.py
      |	     |   |-- utils.py
@@ -83,13 +82,31 @@ Installation and basic usage
 
   #. Run batch jobs
 
-      Transfer the generated batch job scripts to the supercomputer. Prepare a directory for each parameter set, and create a list of the directory names in a file ``list.dat``.
+      Transfer the generated batch job scripts to the supercomputer.
+      Prepare a directory for each parameter set, and create a list of the directory names in a file ``list.dat``.
+      Note that the list contains the relative paths to the directory where the batch job is executed, or the absolute paths.
 
-      Once the list file is ready, you may submit a batch job. The actual command may depend on the system. For example, for the system using slurm job scheduler (c.f. ISSP system B (ohtaka)), you may type in as follows:
+      Once the list file is ready, you may submit a batch job. The actual command depends on the system.
 
-      .. code-block:: bash
+      - In case of ISSP system B (ohtaka)
 
-          $ sbatch job.sh list.dat
+        In ohtaka, slurm is used for the job scheduling system. In order to submit a batch job, a command ``sbatch`` is invoked with the job script as an argument. Parameters can be passed to the script as additional arguments; the name of list file is specified as a parameter.
+
+        .. code-block:: bash
+
+            $ sbatch job.sh list.dat
+
+        If the list file is not specified, ``list.dat`` is used by default.
+
+      - In case of ISSP system C (kugui)
+
+        In kugui, PBS is used for the job scheduling system. In order to submit a batch job, a command ``qsub`` is invoked with the job script. There is no way to pass parameters to the script, and thus the name of the list file is fixed to ``list.dat``.
+
+        .. code-block:: bash
+
+            $ qsub job.sh
+
+  #. Check the status of the calculation
 
       After the job finishes, you may run the following command
 
@@ -98,3 +115,36 @@ Installation and basic usage
           $ moller_status input.yaml list.dat
 
       to obtain a report whether the calculation for each parameter set has been completed successfully.
+
+
+  #. Retry/resume job
+
+        In case the job is terminated during the execution, the job may be resumed by submitting the batch job again with the same list file.
+        The yet unexecuted jobs (as well as the unfinished jobs) will be run.
+
+
+        - In case of ISSP system B (ohtaka)
+
+        .. code-block:: bash
+
+          $ sbatch job.sh list.dat
+
+        To retry the failed tasks, the batch job is submitted with ``--retry`` command line option.
+
+        .. code-block:: bash
+
+          $ sbatch job.sh --retry list.dat
+
+        - In case of ISSP system C (kugui)
+
+        For kugui, to retry the failed tasks, the batch job script should be edited so that ``retry=0`` is changed to be ``retry=1``.
+
+        .. code-block:: bash
+
+          $ qsub job.sh
+
+        Then, the batch job is submitted as above.
+
+**References**
+
+[1] `O. Tange, GNU Parallel - The command-Line Power Tool, ;login: The USENIX Magazine, February 2011:42-47. <https://www.usenix.org/publications/login/february-2011-volume-36-number-1/gnu-parallel-command-line-power-tool>`_

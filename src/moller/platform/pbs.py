@@ -5,16 +5,18 @@ from .utils import *
 import logging
 logger = logging.getLogger(__name__)
 
-class Kugui(BasePBS):
+class Pbs(BasePBS):
     def __init__(self, info):
         super().__init__(info)
+        # check
         if self.ncore is None:
-            self.ncore = 128  # default
+            logger.error("number of cores per node not specified.")
+            raise ValueError("number of cores per node not specified")
 
     @classmethod
     def create(cls, info):
         return cls(info)
 
 # for platform factory
-register_platform("kugui", Kugui)
+register_platform("pbs", Pbs)
 

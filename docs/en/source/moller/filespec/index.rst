@@ -44,7 +44,11 @@ platform
 
   ``node``
 
-    specifies the number of nodes to be used. It is given by an integer specifying the number of nodes, or a list of integers specifying ``[`` number of nodes, number of processes per node, number of cores per process ``]``. The accepted range of parameters depends on the system and queue settings.
+    specifies the number of nodes to be used. It is given by an integer specifying the number of nodes, or a list of integers specifying ``[`` number of nodes, number of cores per node ``]``. The accepted range of parameters depends on the system and queue settings. (The number of cores is accepted for kugui and default systems; otherwise it is ignored.)
+
+  ``core``
+
+    specifies the number of cores per node be used. The accepted range of parameters depends on the system and queue settings. If both the second parameter of ``node`` and ``core`` are specified, the value in ``core`` is used. (This parameter is accepted for kugui and default target systems.)
 
   ``elapsed``
 
@@ -103,6 +107,6 @@ jobs
 List file
 ----------------------------------------------------------------
 
-This file contains a list of jobs. It is a text file with a job name in a line.
+This file contains a list of jobs. It is a text file with a job name in a line (The name of the directory is associated with the name of the job).
 
-``moller`` assumes that a directory is assigned to each job, and the tasks of the job are executed within the directory. These directories are supposed to be located in the directory where the batch job is submitted. The name of the directory is associated with the name of the job.
+``moller`` assumes that a directory is assigned to each job, and the tasks of the job are executed within the directory. These directories are supposed to be located in the directory where the batch job is submitted.
