@@ -31,7 +31,9 @@ class TaskSerial:
     def generate(self, fp):
         logger.info('TaskSerial: name={}'.format(self.name))
         if self.code is not None:
+            fp.write("#-------- {} --------\n".format(self.name))
             fp.write(self.code)
+            fp.write('\n')
 
 class TaskParallel:
     def __init__(self, name, info, platform):
@@ -64,7 +66,7 @@ class TaskParallel:
         self.node = node
 
         self.func_name = 'task_{}'.format(self.name)
-        self.log_file = 'log_{}.dat'.format(self.name)
+        self.log_file = 'stat_{}.dat'.format(self.name)
         self.prev_log_file = info.get('prev_log_file', None)
 
         self.code = info.get('run', '')
@@ -86,7 +88,7 @@ class TaskParallel:
             if re.match(r'(srun|mpirun|mpiexec)', line):
                 line = re.sub(r'(srun|mpirun|mpiexec)', srun_str, line)
 
-                lines_new.append(r'  [ $_debug -eq 1 ] && echo "DEBUG: $_work_item: ' + line + '"')
+                lines_new.append(r'  DEBUG "$_work_item: ' + line + '"')
                 # line = re.sub(r'^', '  ', line)
                 lines_new.append(line)
             else:
@@ -128,6 +130,7 @@ class TaskParallel:
         exec_lines.append('echo "  {}"'.format(self.name))
         exec_lines.append(r"printf '%s\n' ${mplist[@]} | run_parallel" + (' {} {} {}'.format(par_sig, self.func_name, self.log_file)))
 
+        fp.write("#-------- {} --------\n".format(self.name))
         fp.write('\n'.join(func_lines) + '\n')
         fp.write('\n'.join(exec_lines) + '\n')
         fp.write('\n')
@@ -156,6 +159,7 @@ class ScriptGenerator:
 
         self.tasklist = []
         prev_log_file = None
+        log_file_list = []
 
         jobs = info.get('jobs', {})
         for task_name, task_info in jobs.items():
@@ -164,18 +168,34 @@ class ScriptGenerator:
                 task_info.update({'prev_log_file': prev_log_file})
                 task = TaskParallel(task_name, task_info, self.platform)
                 prev_log_file = task.log_file
+                log_file_list.append(task.log_file)
             else:
                 task = TaskSerial(task_name, task_info, self.platform)
             self.tasklist.append(task)
 
+        check_logfile = TaskSerial('check_logfile', {
+            'code': self.generate_check_logfile(log_file_list)
+        }, self.platform)
+
         self.tasklist.insert(0, prologue)
         self.tasklist.insert(1, func_def)
+        self.tasklist.insert(2, check_logfile)
         self.tasklist.append(epilogue)
     
     def generate(self, fp):
         self.platform.generate_header(fp)
         for task in self.tasklist:
             task.generate(fp)
+
+    def generate_check_logfile(self, log_file_list):
+        func_lines = []
+        func_lines.append('_logfile_count=0')
+        for log_file in log_file_list:
+            func_lines.append('if [ -f {} ]; then\n    _logfile_count=$((_logfile_count + 1))\n    echo "INFO: status file {} found."\nfi'.format(log_file, log_file))
+        func_lines.append('if [ $_logfile_count -gt 0 ]; then')
+        func_lines.append('    echo "INFO: job status file found. make sure it is resume/retry run."')
+        func_lines.append('fi')
+        return '\n'.join(func_lines) + '\n'
 
 def run(*, info_file = None, info_dict = None, output = None):
     if info_dict is None and info_file is None:

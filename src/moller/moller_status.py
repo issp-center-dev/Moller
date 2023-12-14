@@ -128,7 +128,7 @@ class TaskStatus:
         for task_name, task_info in info_dict.get('jobs', {}).items():
             task_type = task_info.get('parallel', True)
             if task_type:
-                log_file = "log_{}.dat".format(task_name)
+                log_file = "stat_{}.dat".format(task_name)
                 task_list.append((task_name, log_file))
 
         return task_list

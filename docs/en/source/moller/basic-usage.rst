@@ -8,7 +8,7 @@ Installation and basic usage
   - Python 3.x
   - ruamel.yaml module
   - tabulate module
-  - GNU Parallel
+  - GNU Parallel (It must be installed on servers or compute nodes on which the job script is executed.)
 
 **Official pages**
 
@@ -57,6 +57,7 @@ Installation and basic usage
      |	     |   |-- base_default.py
      |	     |   |-- ohtaka.py
      |	     |   |-- kugui.py
+     |	     |   |-- pbs.py
      |	     |   |-- default.py
      |	     |   |-- function.py
      |	     |   |-- utils.py
@@ -83,7 +84,7 @@ Installation and basic usage
 
       Transfer the generated batch job scripts to the supercomputer.
       Prepare a directory for each parameter set, and create a list of the directory names in a file ``list.dat``.
-      Note that the directory must be placed directly under the directory where the batch job is executed.
+      Note that the list contains the relative paths to the directory where the batch job is executed, or the absolute paths.
 
       Once the list file is ready, you may submit a batch job. The actual command depends on the system.
 

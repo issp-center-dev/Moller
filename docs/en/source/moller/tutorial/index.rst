@@ -42,13 +42,15 @@ It details the common command line to be executed before running the task.
 In the jobs section, the content of the task processing is described.
 The series of tasks to be executed in the job are described in a table format,
 with the task name as the key and the processing content as the value.
-In this example, a task that first outputs "start..." is defined with the task name "start."
-Here, it is set to "parallel = false."
-In this case, the jobs are executed sequentially.
-Next, a task that outputs "hello world." is defined with the task name "hello world." .
-Here, since "parallel" is not set, it is executed as "parallel = true." .
+
+In this example, a task that first outputs "start..." is defined with the task name "start".
+Here, it is set to ``parallel = false``.
+In this case, the content of ``run`` parameter is executed sequentially.
+
+Next, a task that outputs "hello world." is defined with the task name "hello_world" .
+Here, since "parallel" is not set, it is treated as ``parallel = true``.
 In this case, parallel processing is performed on a per-job basis.
-Similarly, next, a task that outputs "hello world again." is defined with the task name "hello world again."
+Similarly, next, a task that outputs "hello world again." is defined with the task name "hello_again".
 
 Finally, in the epilogue section, the post-processing of the batch job is described.
 It details the common command line to be executed after running the task.
@@ -72,7 +74,7 @@ The obtained batch job script is to be transferred to the target system as requi
 Create list file
 ----------------------------------------------------------------
 
-A list of jobs is to be created. ``moller`` is designed so that each job is executed within a directory prepared for the job with the job name. They are assumed to be placed in the directory in which the batch job runs. The job list can be created, for example, by the following command:
+A list of jobs is to be created. ``moller`` is designed so that each job is executed within a directory prepared for the job with the job name. The job list can be created, for example, by the following command:
 
 .. code-block:: bash
 
@@ -91,6 +93,13 @@ Run batch job
 ----------------------------------------------------------------
 
 The batch job is to be submitted to the job scheduler with the batch job script.
+In this example, the job script and the input parameter files are copied into the ``output`` directory, and the current directory is changed to ``output` as follows:
+
+.. code-block:: bash
+
+  $ cp job.sh input.yaml output/
+  $ cd output
+
 In ohtaka, slurm is used for the job scheduling system. In order to submit a batch job, a command ``sbatch`` is invoked with the job script as an argument.
 Parameters can be passed to the script as additional arguments; the name of list file is specified as a parameter.
 

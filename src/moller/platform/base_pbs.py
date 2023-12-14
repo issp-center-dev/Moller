@@ -29,7 +29,10 @@ class BasePBS(Platform):
 
         sched_params = []
         sched_params.append('-q {}'.format(self.queue))
-        sched_params.append('-l select={}'.format(self.nnode))
+        if self.ncore is not None:
+            sched_params.append('-l select={}:ncpus={}'.format(self.nnode, self.ncore))
+        else:
+            sched_params.append('-l select={}'.format(self.nnode))
         sched_params.append('-l walltime={}'.format(convert_seconds_to_hhmmss(self.elapsed)))
         if self.job_name is not None:
             sched_params.append('-N {}'.format(self.job_name))
@@ -37,6 +40,7 @@ class BasePBS(Platform):
         fp.write(shebang)
         fp.write('\n'.join([ sched_key + s for s in sched_params ]) + '\n\n')
         fp.write('export _debug=0\n\n')
+        fp.write('cd $PBS_O_WORKDIR\n\n')
 
     function_find_multiplicity = r"""
 function _gen_mask () {
@@ -170,7 +174,7 @@ function _setup_taskenv () {
   
   export OMP_NUM_THREADS=$_nc
   export I_MPI_PIN_DOMAIN=$_mask
-  [ $_debug -eq 1 ] && echo "DEBUG: $_work_item: host=$_node mask=$_mask nthr=$_nc"
+  DEBUG "$_work_item: host=$_node mask=$_mask nthr=$_nc"
 }
 export -f _setup_taskenv
     """
@@ -201,8 +205,16 @@ export -f _setup_run_parallel
         var_list.append(r'declare -a _mask_table=()')
         var_list.append(r'_signature=""')
         var_list.append(r'export _enable_mask=0')
-        var_list.append(r'[ $_debug -eq 1 ] && echo "DEBUG: nodefile=$PBS_NODEFILE" && echo "DEBUG: nodes=${_nodes[@]}" && echo "DEBUG: cores=$_ncores"')
-        return '\n'.join(var_list) + '\n'
+        str = '\n'.join(var_list) + '\n'
+
+        str += r"""
+if [ $_debug -gt 0 ]; then
+    echo "DEBUG: nodefile=$PBS_NODEFILE"
+    echo "DEBUG: nodes=${_nodes[@]}"
+    echo "DEBUG: cores=$_ncores"
+fi
+ """
+        return str
 
     def generate_function(self):
         str = ''
