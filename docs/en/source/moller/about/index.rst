@@ -5,6 +5,10 @@ Introduction
 What is moller?
 ----------------------------------------------------------------
 
+In recent years, the use of machine learning for predicting material properties and designing substances (known as materials informatics) has gained considerable attention.
+The accuracy of machine learning depends heavily on the preparation of appropriate training data.
+Therefore, the development of tools and environments for the rapid generation of training data is expected to contribute significantly to the advancement of research in materials informatics.
+
 moller is provided as part of the HTP-Tools package, designed to support high-throughput computations.
 It is a tool for generating batch job scripts for supercomputers and clusters, allowing parallel execution of programs under a series of computational conditions, such as parameter parallelism.
 Currently, it supports the supercomputers ohtaka (using the slurm job scheduler) and kugui (using the PBS job scheduler) provided by the Institute for Solid State Physics, University of Tokyo.
