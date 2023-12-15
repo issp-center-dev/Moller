@@ -4,7 +4,7 @@ DSQSS による *moller* 計算の例
 このチュートリアルについて
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-これは、量子多体問題の経路積分モンテカルロ法を実行するためのオープンソースソフトウェアパッケージである `DSQSS <https://github.com/issp-center-dev/DSQSS>`__ を用いた ``moller`` の例です。この例では、周期境界条件下の :math:`S=1/2` (DSQSSの用語では:math:`M=1`) および :math:`S=1` (:math:`M=2`) 反強磁性ハイゼンベルク鎖の磁気感受率 :math:`\chi` の温度依存性を計算します。 ``moller`` を使用することで、異なるパラメーター (:math:`M, L, T`) の計算を並列に実行します。
+これは、量子多体問題の経路積分モンテカルロ法を実行するためのオープンソースソフトウェアパッケージである `DSQSS <https://github.com/issp-center-dev/DSQSS>`__ を用いた ``moller`` の例です。この例では、周期境界条件下の :math:`S=1/2` (DSQSSの用語では :math:`M=1`) および :math:`S=1` (:math:`M=2`) 反強磁性ハイゼンベルク鎖の磁気感受率 :math:`\chi` の温度依存性を計算します。 ``moller`` を使用することで、異なるパラメーター (:math:`M, L, T`) の計算を並列に実行します。
 
 この例は `公式チュートリアルの一つ <https://issp-center-dev.github.io/dsqss/manual/develop/en/dla/tutorial/spinchain.html>`__ に対応しています。
 
