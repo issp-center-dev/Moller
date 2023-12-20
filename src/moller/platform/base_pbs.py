@@ -156,6 +156,12 @@ function _find_multiplicity () {
     fi
     _multiplicity=$_w
     _signature=$_s
+
+    # check
+    if [ ${_multiplicity} -lt 1 ]; then
+        echo "ERROR: insufficient number of allocated cores"
+        exit 1
+    fi
 }
     """
 
