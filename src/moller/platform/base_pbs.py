@@ -165,7 +165,7 @@ function _setup_taskenv () {
   eval $_pack_mask_table
   _node=${_node_table[$_slot_id]}
   if [ ${#_mask_table[@]} -le 1 ]; then
-      _mask=$NCPUS
+      _mask=$_ncores
   else
       _mask="[${_mask_table[$_slot_id]}]"
   fi
@@ -188,6 +188,38 @@ function _setup_run_parallel () {
 export -f _setup_run_parallel
     """
 
+    function_setup_variables = r"""
+declare -a _nodes=( `cat $PBS_NODEFILE | sort | uniq | xargs` )
+_nnodes=${#_nodes[@]}
+
+_ncores=0
+if [ -n "${NCPUS+x}" ]; then
+    _ncores=${NCPUS}
+elif [ -n "${OMP_NUM_THREADS+x}" ]; then
+    _ncores=${OMP_NUM_THREADS}
+else
+    _nc=`cat $0 | grep '^#PBS' | grep 'ppn=' | sed -e 's/.*ppn=\([0-9]*\).*/\1/'`
+    if [ -n "${_nc}" ]; then
+            _ncores=$_nc
+    else
+        echo "ERROR: cannot find number of cores per node"
+        exit 1
+    fi
+fi
+export _ncores
+
+_multiplicity=0
+declare -a _node_table=()
+declare -a _mask_table=()
+_signature=""
+
+if [ $_debug -gt 0 ]; then
+    echo "DEBUG: nodefile=$PBS_NODEFILE"
+    echo "DEBUG: nodes=${_nodes[@]}"
+    echo "DEBUG: cores=$_ncores"
+fi
+"""
+
     def generate_function_body(self):
         flist = ScriptFunction.function_defs
         flist.append(self.function_find_multiplicity)
@@ -196,24 +228,15 @@ export -f _setup_run_parallel
         return ''.join(flist)
         
     def generate_variable(self):
-        var_list = []
-        var_list.append(r'declare -a _nodes=( `cat $PBS_NODEFILE | sort | uniq | xargs` )')
-        var_list.append(r'_nnodes=${#_nodes[@]}')
-        var_list.append(r'_ncores=$NCPUS')
-        var_list.append(r'_multiplicity=0')
-        var_list.append(r'declare -a _node_table=()')
-        var_list.append(r'declare -a _mask_table=()')
-        var_list.append(r'_signature=""')
-        var_list.append(r'export _enable_mask=0')
-        str = '\n'.join(var_list) + '\n'
+        str = ""
 
-        str += r"""
-if [ $_debug -gt 0 ]; then
-    echo "DEBUG: nodefile=$PBS_NODEFILE"
-    echo "DEBUG: nodes=${_nodes[@]}"
-    echo "DEBUG: cores=$_ncores"
-fi
- """
+        var_list = []
+        var_list.append(r'export _enable_mask=0')
+        str += '\n'.join(var_list) + '\n'
+
+        str += self.function_setup_variables
+        #str += "_setup_variables\n"
+
         return str
 
     def generate_function(self):
