@@ -235,8 +235,10 @@ if [ -n "${NCPUS+x}" ]; then
     _ncores=${NCPUS}
 elif [ -n "${OMP_NUM_THREADS+x}" ]; then
     _ncores=${OMP_NUM_THREADS}
+elif [ -n "${moller_core}" ]; then
+    _ncores=${moller_core}
 else
-    _nc=`cat $0 | grep '^#PBS' | grep 'ppn=' | sed -e 's/.*ppn=\([0-9]*\).*/\1/'`
+    _nc=`cat $0 | grep '^#PBS' | egrep '(ppn|ncpus)=' | sed -e 's/.*\(ppn\|ncpus\)=\([0-9]*\).*/\2/'`
     if [ -n "${_nc}" ]; then
             _ncores=$_nc
     else
@@ -271,6 +273,10 @@ fi
         var_list = []
         var_list.append(r'export _enable_mask=0')
         str += '\n'.join(var_list) + '\n'
+
+        str += "\n"
+        str += "moller_node={}".format(self.nnode if self.nnode else "") + "\n"
+        str += "moller_core={}".format(self.ncore if self.ncore else "") + "\n"
 
         str += self.function_setup_variables
         #str += "_setup_variables\n"
