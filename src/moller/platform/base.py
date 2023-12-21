@@ -5,7 +5,7 @@ logger = logging.getLogger(__name__)
 
 class Platform:
     def __init__(self, info):
-        pass
+        self.info = info
 
     def batch_queue_setup(self, info):
         if 'queue' not in info:

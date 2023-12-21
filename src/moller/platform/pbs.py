@@ -8,6 +8,7 @@ logger = logging.getLogger(__name__)
 class Pbs(BasePBS):
     def __init__(self, info):
         super().__init__(info)
+        self.pbs_use_old_format = True
         # check
         if self.ncore is None:
             logger.error("number of cores per node not specified.")

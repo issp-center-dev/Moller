@@ -9,6 +9,7 @@ class BasePBS(Platform):
     def __init__(self, info):
         super().__init__(info)
         self.setup(info)
+        self.pbs_use_old_format = False
 
     def setup(self, info):
         super().batch_queue_setup(info)
@@ -28,19 +29,50 @@ class BasePBS(Platform):
         sched_key = '#PBS '
 
         sched_params = []
-        sched_params.append('-q {}'.format(self.queue))
-        if self.ncore is not None:
-            sched_params.append('-l select={}:ncpus={}'.format(self.nnode, self.ncore))
-        else:
-            sched_params.append('-l select={}'.format(self.nnode))
-        sched_params.append('-l walltime={}'.format(convert_seconds_to_hhmmss(self.elapsed)))
-        if self.job_name is not None:
-            sched_params.append('-N {}'.format(self.job_name))
+        sched_params.append(self.generate_queue_line())
+        sched_params.append(self.generate_node_line())
+        sched_params.append(self.generate_elapsed_line())
+        sched_params.append(self.generate_jobname_line())
+
+        if "options" in self.info and self.info["options"] is not None:
+            opt = self.info["options"]
+            if type(opt) == str:
+                sched_params += [t.strip() for t in opt.splitlines() if len(t.strip()) > 0]
+            elif type(opt) == list:
+                sched_params += opt
+            else:
+                logger.error("unknown option type {}".type(opt))
+                raise ValueError("unknown option type {}".type(opt))
 
         fp.write(shebang)
-        fp.write('\n'.join([ sched_key + s for s in sched_params ]) + '\n\n')
+        fp.write('\n'.join([ sched_key + s for s in sched_params if s is not None ]) + '\n\n')
         fp.write('export _debug=0\n\n')
         fp.write('cd $PBS_O_WORKDIR\n\n')
+
+    def generate_queue_line(self):
+        return "-q {}".format(self.queue) if self.queue else None
+
+    def generate_node_line(self):
+        if self.pbs_use_old_format:
+            if self.nnode is None:
+                return None
+            if self.ncore is not None:
+                return '-l node={}:ppn={}'.format(self.nnode, self.ncore)
+            else:
+                return '-l node={}'.format(self.nnode)
+        else:
+            if self.nnode is None:
+                return None
+            if self.ncore is not None:
+                return '-l select={}:ncpus={}'.format(self.nnode, self.ncore)
+            else:
+                return '-l select={}'.format(self.nnode)
+
+    def generate_elapsed_line(self):
+        return "-l walltime={}".format(convert_seconds_to_hhmmss(self.elapsed)) if self.elapsed else None
+
+    def generate_jobname_line(self):
+        return "-N {}".format(self.job_name) if self.job_name else None
 
     function_find_multiplicity = r"""
 function _gen_mask () {
@@ -156,6 +188,12 @@ function _find_multiplicity () {
     fi
     _multiplicity=$_w
     _signature=$_s
+
+    # check
+    if [ ${_multiplicity} -lt 1 ]; then
+        echo "ERROR: insufficient number of allocated cores"
+        exit 1
+    fi
 }
     """
 
@@ -165,7 +203,7 @@ function _setup_taskenv () {
   eval $_pack_mask_table
   _node=${_node_table[$_slot_id]}
   if [ ${#_mask_table[@]} -le 1 ]; then
-      _mask=$NCPUS
+      _mask=$_ncores
   else
       _mask="[${_mask_table[$_slot_id]}]"
   fi
@@ -188,6 +226,40 @@ function _setup_run_parallel () {
 export -f _setup_run_parallel
     """
 
+    function_setup_variables = r"""
+declare -a _nodes=( `cat $PBS_NODEFILE | sort | uniq | xargs` )
+_nnodes=${#_nodes[@]}
+
+_ncores=0
+if [ -n "${NCPUS+x}" ]; then
+    _ncores=${NCPUS}
+elif [ -n "${OMP_NUM_THREADS+x}" ]; then
+    _ncores=${OMP_NUM_THREADS}
+elif [ -n "${moller_core}" ]; then
+    _ncores=${moller_core}
+else
+    _nc=`cat $0 | grep '^#PBS' | egrep '(ppn|ncpus)=' | sed -e 's/.*\(ppn\|ncpus\)=\([0-9]*\).*/\2/'`
+    if [ -n "${_nc}" ]; then
+            _ncores=$_nc
+    else
+        echo "ERROR: cannot find number of cores per node"
+        exit 1
+    fi
+fi
+export _ncores
+
+_multiplicity=0
+declare -a _node_table=()
+declare -a _mask_table=()
+_signature=""
+
+if [ $_debug -gt 0 ]; then
+    echo "DEBUG: nodefile=$PBS_NODEFILE"
+    echo "DEBUG: nodes=${_nodes[@]}"
+    echo "DEBUG: cores=$_ncores"
+fi
+"""
+
     def generate_function_body(self):
         flist = ScriptFunction.function_defs
         flist.append(self.function_find_multiplicity)
@@ -196,24 +268,19 @@ export -f _setup_run_parallel
         return ''.join(flist)
         
     def generate_variable(self):
-        var_list = []
-        var_list.append(r'declare -a _nodes=( `cat $PBS_NODEFILE | sort | uniq | xargs` )')
-        var_list.append(r'_nnodes=${#_nodes[@]}')
-        var_list.append(r'_ncores=$NCPUS')
-        var_list.append(r'_multiplicity=0')
-        var_list.append(r'declare -a _node_table=()')
-        var_list.append(r'declare -a _mask_table=()')
-        var_list.append(r'_signature=""')
-        var_list.append(r'export _enable_mask=0')
-        str = '\n'.join(var_list) + '\n'
+        str = ""
 
-        str += r"""
-if [ $_debug -gt 0 ]; then
-    echo "DEBUG: nodefile=$PBS_NODEFILE"
-    echo "DEBUG: nodes=${_nodes[@]}"
-    echo "DEBUG: cores=$_ncores"
-fi
- """
+        var_list = []
+        var_list.append(r'export _enable_mask=0')
+        str += '\n'.join(var_list) + '\n'
+
+        str += "\n"
+        str += "moller_node={}".format(self.nnode if self.nnode else "") + "\n"
+        str += "moller_core={}".format(self.ncore if self.ncore else "") + "\n"
+
+        str += self.function_setup_variables
+        #str += "_setup_variables\n"
+
         return str
 
     def generate_function(self):

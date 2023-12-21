@@ -141,7 +141,7 @@ class ScriptGenerator:
         self.setup(info)
 
     def setup(self, info):
-        self.name = info.get('name', sys.argv[0])
+        self.name = info.get('name', None)
         self.desc = info.get('description', None)
         self.output_file = info.get('output_file', None)
 
