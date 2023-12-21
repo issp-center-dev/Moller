@@ -54,6 +54,28 @@ platform
 
     specifies the elapsed time of the batch job in HH:MM:SS format.
 
+  ``options``
+
+    specifies other batch job options. It is given as a list of options or as a multiple-line string with options in each line. The heading directives (e.g. ``#PBS`` or ``#SBATCH``) are not included. The examples are given as follows.
+
+    - an example of SLURM job script in the string format:
+
+      .. code-block:: yaml
+
+          options: |
+	    --mail-type=BEGIN,END,FAIL
+	    --mail-user=user@sample.com
+	    --requeue
+
+    - an example of PBS job script in the list format:
+
+      .. code-block:: yaml
+
+          options:
+	    - -m bea
+	    - -M user@sample.com
+	    - -r y
+
 prologue, epilogue
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ``prologue`` section specifies the commands to be run prior to executing the tasks. It is used, for example, to set environment variables of libraries and paths.
