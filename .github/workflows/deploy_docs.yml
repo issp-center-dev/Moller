@@ -37,14 +37,12 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install sphinx
-        apt-get update && apt-get install -y -q latexmk
 
     - name: Build
       run: |
         for lang in ja en; do
           cd ${GITHUB_WORKSPACE}/main/docs/${lang}
           make html
-          make latexpdf
         done
 
     - name: Deploy Configuration
@@ -65,7 +63,6 @@ jobs:
             rm -rf "gh-pages/manual/${TARGET_NAME}/${lang}"
             mkdir -p "gh-pages/manual/${TARGET_NAME}/${lang}"
             cp -r "main/docs/${lang}/build/html" "gh-pages/manual/${TARGET_NAME}/${lang}"
-            cp -r "main/docs/${lang}/build/latex/moller-usersguide.pdf" "gh-pages/manual/${TARGET_NAME}/${lang}"
           done
           cd gh-pages
           git config --local user.name "${GIT_USER}"
