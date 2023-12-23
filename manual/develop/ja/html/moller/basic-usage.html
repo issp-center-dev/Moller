@@ -1,20 +1,17 @@
-
 <!DOCTYPE html>
 
-<html lang="ja">
+<html lang="ja" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>2. インストールと基本的な使い方 &#8212; Moller Users Guide 1.0-beta ドキュメント</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/translations.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=51c57257" />
+    <script src="../_static/documentation_options.js?v=eb5e0c7f"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/translations.js?v=4dbe4bdc"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="検索" href="../search.html" />
     <link rel="next" title="3. チュートリアル" href="tutorial/index.html" />
@@ -36,7 +33,7 @@
           <div class="body" role="main">
             
   <section id="id1">
-<h1><span class="section-number">2. </span>インストールと基本的な使い方<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h1>
+<h1><span class="section-number">2. </span>インストールと基本的な使い方<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
 <p><strong>必要なライブラリ・環境</strong></p>
 <blockquote>
 <div><p>HTP-tools に含まれる網羅計算ツール moller を利用するには、以下のプログラムとライブラリが必要です。</p>
@@ -56,15 +53,15 @@
 <p><strong>ダウンロード方法</strong></p>
 <blockquote>
 <div><p>gitを利用できる場合は、以下のコマンドでmollerをダウンロードできます。</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/issp-center-dev/Moller.git
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/issp-center-dev/Moller.git
 </pre></div>
 </div>
 </div></blockquote>
 <p><strong>インストール方法</strong></p>
 <blockquote>
 <div><p>mollerをダウンロード後、以下のコマンドを実行してインストールします。mollerが利用するライブラリも必要に応じてインストールされます。</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> ./Moller
-$ python3 -m pip install .
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>./Moller
+$<span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.
 </pre></div>
 </div>
 <p>実行プログラム <code class="docutils literal notranslate"><span class="pre">moller</span></code> および <code class="docutils literal notranslate"><span class="pre">moller_status</span></code> がインストールされます。</p>
@@ -111,7 +108,7 @@ $ python3 -m pip install .
 <li><p>コマンドの実行</p>
 <blockquote>
 <div><p>作成した構成定義ファイルを入力としてmollerプログラムを実行します。バッチジョブスクリプトが生成されます。</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ moller -o job.sh input.yaml
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>moller<span class="w"> </span>-o<span class="w"> </span>job.sh<span class="w"> </span>input.yaml
 </pre></div>
 </div>
 </div></blockquote>
@@ -126,14 +123,14 @@ $ python3 -m pip install .
 <ul>
 <li><p>物性研システムB(ohtaka)の場合</p>
 <p>ohtaka では slurm ジョブスケジューラが使用されています。バッチジョブを投入するには、バッチジョブスクリプトを引数として sbatch コマンドを実行します。ジョブスクリプト名に続けてスクリプトのパラメータを渡すことができます。パラメータとしてリストファイルを指定します。</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sbatch job.sh list.dat
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>sbatch<span class="w"> </span>job.sh<span class="w"> </span>list.dat
 </pre></div>
 </div>
 <p>リストファイルの指定がない場合は list.dat がデフォルトとして使われます。</p>
 </li>
 <li><p>物性研システムC(kugui)の場合</p>
 <p>kugui では PBS ジョブスケジューラが使用されています。バッチジョブを投入するには、バッチジョブスクリプトを引数として qsub コマンドを実行します。スクリプトのパラメータの指定はできないので、リストファイルは list.dat として用意する必要があります。</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ qsub job.sh
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>qsub<span class="w"> </span>job.sh
 </pre></div>
 </div>
 </li>
@@ -143,7 +140,7 @@ $ python3 -m pip install .
 <li><p>結果の確認</p>
 <blockquote>
 <div><p>バッチジョブ終了後に、</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ moller_status input.yaml list.dat
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>moller_status<span class="w"> </span>input.yaml<span class="w"> </span>list.dat
 </pre></div>
 </div>
 <p>を実行すると、各パラメータセットについて計算が正常に終了したかどうかを集計したレポートが出力されます。</p>
@@ -156,17 +153,17 @@ $ python3 -m pip install .
 <ul>
 <li><p>物性研システムB(ohtaka)の場合</p>
 <p>以下のように、リストファイルを指定して sbatch コマンドを実行します。</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sbatch job.sh list.dat
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>sbatch<span class="w"> </span>job.sh<span class="w"> </span>list.dat
 </pre></div>
 </div>
 <p>エラーで終了したタスクを再実行するには、--retry オプションを付けてバッチジョブを投入します。</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sbatch job.sh --retry list.dat
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>sbatch<span class="w"> </span>job.sh<span class="w"> </span>--retry<span class="w"> </span>list.dat
 </pre></div>
 </div>
 </li>
 <li><p>物性研システムC(kugui)の場合</p>
 <p>job.sh を編集して retry=0 の行を retry=1 に書き換えた後、</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ qsub job.sh
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>qsub<span class="w"> </span>job.sh
 </pre></div>
 </div>
 <p>を実行します。</p>
@@ -245,8 +242,8 @@ $ python3 -m pip install .
       &copy;2023-, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
       |
       <a href="../_sources/moller/basic-usage.rst.txt"

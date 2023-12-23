@@ -1,20 +1,17 @@
-
 <!DOCTYPE html>
 
-<html lang="ja">
+<html lang="ja" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>5. ファイルフォーマット &#8212; Moller Users Guide 1.0-beta ドキュメント</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/translations.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=51c57257" />
+    <script src="../../_static/documentation_options.js?v=eb5e0c7f"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/translations.js?v=4dbe4bdc"></script>
     <link rel="index" title="索引" href="../../genindex.html" />
     <link rel="search" title="検索" href="../../search.html" />
     <link rel="prev" title="4. コマンドリファレンス" href="../command/index.html" />
@@ -35,9 +32,9 @@
           <div class="body" role="main">
             
   <section id="sec-fileformat">
-<span id="id1"></span><h1><span class="section-number">5. </span>ファイルフォーマット<a class="headerlink" href="#sec-fileformat" title="Permalink to this heading">¶</a></h1>
+<span id="id1"></span><h1><span class="section-number">5. </span>ファイルフォーマット<a class="headerlink" href="#sec-fileformat" title="Link to this heading">¶</a></h1>
 <section id="id2">
-<h2><span class="section-number">5.1. </span>構成定義ファイル<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">5.1. </span>構成定義ファイル<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
 <p>構成定義ファイルでは、moller でバッチジョブスクリプトを生成するための設定情報を YAML形式で記述します。本ファイルは以下の部分から構成されます。</p>
 <blockquote>
 <div><ol class="arabic simple">
@@ -48,7 +45,7 @@
 </ol>
 </div></blockquote>
 <section id="id3">
-<h3>全体<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
+<h3>全体<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">name</span></code></p>
 <blockquote>
@@ -65,7 +62,7 @@
 </div></blockquote>
 </section>
 <section id="platform">
-<h3>platform<a class="headerlink" href="#platform" title="Permalink to this heading">¶</a></h3>
+<h3>platform<a class="headerlink" href="#platform" title="Link to this heading">¶</a></h3>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">system</span></code></p>
 <blockquote>
@@ -92,18 +89,18 @@
 <div><p>その他のバッチジョブオプションを指定します。書式は、ジョブスクリプトのオプション行の内容をリスト形式または複数行からなる文字列で記述したものです。各行の冒頭の指示語(<code class="docutils literal notranslate"><span class="pre">#PBS</span></code> や <code class="docutils literal notranslate"><span class="pre">#SBATCH</span></code> など)は含めません。以下に例を示します。</p>
 <ul>
 <li><p>SLURMの場合 (文字列で指定する例)</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">options</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">  </span><span class="no">--mail-type=BEGIN,END,FAIL</span><span class="w"></span>
-<span class="w">  </span><span class="no">--mail-user=user@sample.com</span><span class="w"></span>
-<span class="w">  </span><span class="no">--requeue</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">options</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">  </span><span class="no">--mail-type=BEGIN,END,FAIL</span>
+<span class="w">  </span><span class="no">--mail-user=user@sample.com</span>
+<span class="w">  </span><span class="no">--requeue</span>
 </pre></div>
 </div>
 </li>
 <li><p>PBSの場合 (リストで指定する例)</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">options</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-m bea</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-M user@sample.com</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-r y</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">options</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-m bea</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-M user@sample.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-r y</span>
 </pre></div>
 </div>
 </li>
@@ -112,7 +109,7 @@
 </div></blockquote>
 </section>
 <section id="prologue-epilogue">
-<h3>prologue, epilogue<a class="headerlink" href="#prologue-epilogue" title="Permalink to this heading">¶</a></h3>
+<h3>prologue, epilogue<a class="headerlink" href="#prologue-epilogue" title="Link to this heading">¶</a></h3>
 <p>prologueセクションはタスク開始前に実行する内容を記述します。ライブラリやパスなど環境変数の設定等を行うのに利用できます。epilogueセクションは全タスク終了後に実行する内容を記述します。</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">code</span></code></p>
@@ -122,7 +119,7 @@
 </div></blockquote>
 </section>
 <section id="jobs">
-<h3>jobs<a class="headerlink" href="#jobs" title="Permalink to this heading">¶</a></h3>
+<h3>jobs<a class="headerlink" href="#jobs" title="Link to this heading">¶</a></h3>
 <p>ジョブで実行する一連のタスクを、タスク名をキー、処理内容を値として記述するテーブルの形式で記述します。</p>
 <blockquote>
 <div><p>キー</p>
@@ -154,7 +151,7 @@
 <p><code class="docutils literal notranslate"><span class="pre">run</span></code></p>
 <blockquote>
 <div><p>タスクの処理内容をシェルスクリプトの記法で記述します。MPIプログラムまたは MPI/OpenMP ハイブリッドプログラムを実行する箇所は</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>srun prog <span class="o">[</span>arg1, ...<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>srun<span class="w"> </span>prog<span class="w"> </span><span class="o">[</span>arg1,<span class="w"> </span>...<span class="o">]</span>
 </pre></div>
 </div>
 <p>と記述します。 <code class="docutils literal notranslate"><span class="pre">srun</span></code> の他に <code class="docutils literal notranslate"><span class="pre">mpirun</span></code>, <code class="docutils literal notranslate"><span class="pre">mpiexec</span></code> のキーワードが有効です。このキーワードは、実際のバッチジョブスクリプト中では、並列実行のためのコマンド (<code class="docutils literal notranslate"><span class="pre">srun</span></code> や <code class="docutils literal notranslate"><span class="pre">mpirun</span></code>) と <code class="docutils literal notranslate"><span class="pre">node</span></code> パラメータで指定した並列度の設定に置き換えて記述されます。</p>
@@ -165,7 +162,7 @@
 </section>
 </section>
 <section id="id4">
-<h2><span class="section-number">5.2. </span>リストファイル<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">5.2. </span>リストファイル<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
 <p>ジョブのリストを指定します。ファイルはテキスト形式で、一行に一つのジョブ名を記述します(ディレクトリ名がジョブ名となります)。</p>
 <p>mollerでは、ジョブごとにディレクトリを用意し、ジョブ内の各タスクはディレクトリに移動して実行されます。ディレクトリはバッチジョブを実行するディレクトリの直下に配置されているものと仮定します。</p>
 </section>
@@ -236,8 +233,8 @@
       &copy;2023-, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
       |
       <a href="../../_sources/moller/filespec/index.rst.txt"
