@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>2. インストールと基本的な使い方 &#8212; Moller Users Guide 1.0-beta ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=51c57257" />
+    <script src="../_static/documentation_options.js?v=eb5e0c7f"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/translations.js?v=4dbe4bdc"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="3. チュートリアル" href="tutorial/index.html" />
+    <link rel="prev" title="1. 概要" href="about/index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="id1">
+<h1><span class="section-number">2. </span>インストールと基本的な使い方<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
+<p><strong>必要なライブラリ・環境</strong></p>
+<blockquote>
+<div><p>HTP-tools に含まれる網羅計算ツール moller を利用するには、以下のプログラムとライブラリが必要です。</p>
+<ul class="simple">
+<li><p>Python 3.x</p></li>
+<li><p>ruamel.yaml モジュール</p></li>
+<li><p>tabulate モジュール</p></li>
+<li><p>GNU Parallel (ジョブスクリプトを実行するサーバ・計算ノード上にインストールされていること)</p></li>
+</ul>
+</div></blockquote>
+<p><strong>ソースコード配布サイト</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://github.com/issp-center-dev/Moller">GitHubリポジトリ</a></p></li>
+</ul>
+</div></blockquote>
+<p><strong>ダウンロード方法</strong></p>
+<blockquote>
+<div><p>gitを利用できる場合は、以下のコマンドでmollerをダウンロードできます。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/issp-center-dev/Moller.git
+</pre></div>
+</div>
+</div></blockquote>
+<p><strong>インストール方法</strong></p>
+<blockquote>
+<div><p>mollerをダウンロード後、以下のコマンドを実行してインストールします。mollerが利用するライブラリも必要に応じてインストールされます。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>./Moller
+$<span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.
+</pre></div>
+</div>
+<p>実行プログラム <code class="docutils literal notranslate"><span class="pre">moller</span></code> および <code class="docutils literal notranslate"><span class="pre">moller_status</span></code> がインストールされます。</p>
+</div></blockquote>
+<p><strong>ディレクトリ構成</strong></p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span>
+<span class="o">|--</span> <span class="n">LICENSE</span>
+<span class="o">|--</span> <span class="n">README</span><span class="o">.</span><span class="n">md</span>
+<span class="o">|--</span> <span class="n">pyproject</span><span class="o">.</span><span class="n">toml</span>
+<span class="o">|--</span> <span class="n">docs</span><span class="o">/</span>
+<span class="o">|</span>   <span class="o">|--</span> <span class="n">ja</span><span class="o">/</span>
+<span class="o">|</span>   <span class="o">|--</span> <span class="n">en</span><span class="o">/</span>
+<span class="o">|</span>   <span class="o">|--</span> <span class="n">tutorial</span><span class="o">/</span>
+<span class="o">|--</span> <span class="n">src</span><span class="o">/</span>
+<span class="o">|</span>   <span class="o">|--</span> <span class="n">moller</span><span class="o">/</span>
+<span class="o">|</span>       <span class="o">|--</span> <span class="fm">__init__</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|--</span> <span class="n">main</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|--</span> <span class="n">platform</span><span class="o">/</span>
+<span class="o">|</span>       <span class="o">|</span>   <span class="o">|--</span> <span class="fm">__init__</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|</span>   <span class="o">|--</span> <span class="n">base</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|</span>   <span class="o">|--</span> <span class="n">base_slurm</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|</span>   <span class="o">|--</span> <span class="n">base_pbs</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|</span>   <span class="o">|--</span> <span class="n">base_default</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|</span>   <span class="o">|--</span> <span class="n">ohtaka</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|</span>   <span class="o">|--</span> <span class="n">kugui</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|</span>   <span class="o">|--</span> <span class="n">pbs</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|</span>   <span class="o">|--</span> <span class="n">default</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|</span>   <span class="o">|--</span> <span class="n">function</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|</span>   <span class="o">|--</span> <span class="n">utils</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|--</span> <span class="n">moller_status</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|--</span> <span class="n">sample</span><span class="o">/</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p><strong>基本的な使用方法</strong></p>
+<p>mollerはスーパーコンピュータ向けにバッチジョブスクリプトを生成するツールです。多重実行の機能を利用して、パラメータ並列など一連の計算条件について並列にプログラムを実行します。</p>
+<ol class="arabic">
+<li><p>構成定義ファイルの作成</p>
+<blockquote>
+<div><p>mollerを使用するには、まず、計算内容を記述した構成定義ファイルをYAML形式で作成します。詳細についてはファイルフォーマットの章を参照してください。</p>
+</div></blockquote>
+</li>
+<li><p>コマンドの実行</p>
+<blockquote>
+<div><p>作成した構成定義ファイルを入力としてmollerプログラムを実行します。バッチジョブスクリプトが生成されます。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>moller<span class="w"> </span>-o<span class="w"> </span>job.sh<span class="w"> </span>input.yaml
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>バッチジョブの実行</p>
+<blockquote>
+<div><p>生成されたバッチジョブスクリプトを対象となるスーパーコンピュータシステムに転送します。
+並列実行する各パラメータごとにディレクトリを用意し、 <code class="docutils literal notranslate"><span class="pre">list.dat</span></code> にディレクトリ名を列挙します。
+<code class="docutils literal notranslate"><span class="pre">list.dat</span></code> には、ジョブを実行するディレクトリからの相対パスまたは絶対パスを記述します。</p>
+<p>リストファイルが用意できたらバッチジョブを投入します。
+以下では、物性研システムB(ohtaka)およびシステムC(kugui)で実行するケースをそれぞれ示します。</p>
+<ul>
+<li><p>物性研システムB(ohtaka)の場合</p>
+<p>ohtaka では slurm ジョブスケジューラが使用されています。バッチジョブを投入するには、バッチジョブスクリプトを引数として sbatch コマンドを実行します。ジョブスクリプト名に続けてスクリプトのパラメータを渡すことができます。パラメータとしてリストファイルを指定します。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>sbatch<span class="w"> </span>job.sh<span class="w"> </span>list.dat
+</pre></div>
+</div>
+<p>リストファイルの指定がない場合は list.dat がデフォルトとして使われます。</p>
+</li>
+<li><p>物性研システムC(kugui)の場合</p>
+<p>kugui では PBS ジョブスケジューラが使用されています。バッチジョブを投入するには、バッチジョブスクリプトを引数として qsub コマンドを実行します。スクリプトのパラメータの指定はできないので、リストファイルは list.dat として用意する必要があります。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>qsub<span class="w"> </span>job.sh
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>結果の確認</p>
+<blockquote>
+<div><p>バッチジョブ終了後に、</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>moller_status<span class="w"> </span>input.yaml<span class="w"> </span>list.dat
+</pre></div>
+</div>
+<p>を実行すると、各パラメータセットについて計算が正常に終了したかどうかを集計したレポートが出力されます。</p>
+</div></blockquote>
+</li>
+<li><p>ジョブの再開・再実行</p>
+<blockquote>
+<div><p>ジョブが途中で終わった場合、続けて実行するには、同じリストファイルを指定してもう一度バッチジョブを投入します。
+未実行(未完了を含む)のタスクから実行が継続されます。</p>
+<ul>
+<li><p>物性研システムB(ohtaka)の場合</p>
+<p>以下のように、リストファイルを指定して sbatch コマンドを実行します。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>sbatch<span class="w"> </span>job.sh<span class="w"> </span>list.dat
+</pre></div>
+</div>
+<p>エラーで終了したタスクを再実行するには、--retry オプションを付けてバッチジョブを投入します。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>sbatch<span class="w"> </span>job.sh<span class="w"> </span>--retry<span class="w"> </span>list.dat
+</pre></div>
+</div>
+</li>
+<li><p>物性研システムC(kugui)の場合</p>
+<p>job.sh を編集して retry=0 の行を retry=1 に書き換えた後、</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>qsub<span class="w"> </span>job.sh
+</pre></div>
+</div>
+<p>を実行します。</p>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ol>
+<p><strong>参考文献</strong></p>
+<p>[1] <a class="reference external" href="https://www.usenix.org/publications/login/february-2011-volume-36-number-1/gnu-parallel-command-line-power-tool">O. Tange, GNU Parallel - The command-Line Power Tool, ;login: The USENIX Magazine, February 2011:42-47.</a></p>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Moller Users Guide</a></h1>
+
+
+
+
+
+
+
+
+<h3>ナビゲーション</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">網羅計算ツール (moller)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="about/index.html">1. 概要</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2. インストールと基本的な使い方</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html">3. チュートリアル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command/index.html">4. コマンドリファレンス</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filespec/index.html">5. ファイルフォーマット</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">網羅計算ツール (moller)</a><ul>
+      <li>Previous: <a href="about/index.html" title="前の章へ"><span class="section-number">1. </span>概要</a></li>
+      <li>Next: <a href="tutorial/index.html" title="次の章へ"><span class="section-number">3. </span>チュートリアル</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023-, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../_sources/moller/basic-usage.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
