@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>3.1. 基本的な使い方 &#8212; Moller Users Guide 1.0-beta ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=51c57257" />
+    <script src="../../_static/documentation_options.js?v=eb5e0c7f"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/translations.js?v=4dbe4bdc"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="検索" href="../../search.html" />
+    <link rel="next" title="3.2. HPhi による moller 計算の例" href="hphi.html" />
+    <link rel="prev" title="3. チュートリアル" href="index.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="sec-tutorial">
+<span id="id1"></span><h1><span class="section-number">3.1. </span>基本的な使い方<a class="headerlink" href="#sec-tutorial" title="Link to this heading">¶</a></h1>
+<p>網羅計算のためのバッチジョブスクリプト生成ツール moller を使うには、入力ファイルとして実行内容を記述する構成定義ファイルを用意した後、プログラム moller を実行します。生成されたバッチジョブスクリプトを対象とするスーパーコンピュータシステムに転送し、バッチジョブを投入して計算を行います。
+以下では、 <code class="docutils literal notranslate"><span class="pre">docs/tutorial/moller</span></code> ディレクトリにあるサンプルを例にチュートリアルを実施します。</p>
+<section id="id2">
+<h2>構成定義ファイルを作成する<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p>構成定義ファイルにはバッチジョブで実行する処理の内容を記述します。
+ここで、バッチジョブとはスーパーコンピュータシステム等のジョブスケジューラに投入する実行内容を指します。それに対し、moller が対象とするプログラムの多重実行において、多重実行される一つのパラメータセットでの実行内容をジョブと呼ぶことにします。一つのジョブはいくつかの処理単位からなり、その処理単位をタスクと呼びます。moller ではタスクごとに多重実行し、タスクの前後で同期がとられます。</p>
+<figure class="align-default" id="id7">
+<img alt="タスクとジョブ" src="../../_images/task_view.png" />
+<figcaption>
+<p><span class="caption-number">図 3.1 </span><span class="caption-text">例: 一つのバッチジョブ内で job #1〜#3 の 3つのジョブを実行する。ジョブはそれぞれ異なるパラメータセットなどに対応する。ジョブの実行内容は task 1〜4 の一連のタスクからなる。タスクごとに job #1〜#3 の処理を並列に行う。</span><a class="headerlink" href="#id7" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>以下に構成定義ファイルのサンプルを記載します。構成定義ファイルは YAMLフォーマットのテキストファイルで、実行するプラットフォームやバッチジョブのパラメータと、タスクの処理内容、前処理・後処理を記述します。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">name</span><span class="p">:</span> <span class="n">testjob</span>
+<span class="n">description</span><span class="p">:</span> <span class="n">Sample</span> <span class="n">task</span> <span class="n">file</span>
+
+<span class="n">platform</span><span class="p">:</span>
+  <span class="n">system</span><span class="p">:</span>  <span class="n">ohtaka</span>
+  <span class="n">queue</span><span class="p">:</span>   <span class="n">i8cpu</span>
+  <span class="n">node</span><span class="p">:</span>    <span class="mi">1</span>
+  <span class="n">elapsed</span><span class="p">:</span> <span class="mi">00</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">00</span>
+
+<span class="n">prologue</span><span class="p">:</span>
+  <span class="n">code</span><span class="p">:</span> <span class="o">|</span>
+    <span class="n">module</span> <span class="n">purge</span>
+    <span class="n">module</span> <span class="n">load</span> <span class="n">oneapi_compiler</span><span class="o">/</span><span class="mf">2023.0.0</span> <span class="n">openmpi</span><span class="o">/</span><span class="mf">4.1.5</span><span class="o">-</span><span class="n">oneapi</span><span class="o">-</span><span class="mf">2023.0.0</span><span class="o">-</span><span class="n">classic</span>
+
+    <span class="n">ulimit</span> <span class="o">-</span><span class="n">s</span> <span class="n">unlimited</span>
+
+    <span class="n">source</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">issp</span><span class="o">/</span><span class="n">materiapps</span><span class="o">/</span><span class="n">intel</span><span class="o">/</span><span class="n">parallel</span><span class="o">/</span><span class="n">parallelvars</span><span class="o">-</span><span class="mi">20210622</span><span class="o">-</span><span class="mf">1.</span><span class="n">sh</span>
+
+<span class="n">jobs</span><span class="p">:</span>
+  <span class="n">start</span><span class="p">:</span>
+    <span class="n">parallel</span><span class="p">:</span> <span class="n">false</span>
+    <span class="n">run</span><span class="p">:</span> <span class="o">|</span>
+      <span class="n">echo</span> <span class="s2">&quot;start...&quot;</span>
+
+  <span class="n">hello</span><span class="p">:</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">hello</span> <span class="n">world</span>
+    <span class="n">node</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">run</span><span class="p">:</span> <span class="o">|</span>
+      <span class="n">echo</span> <span class="s2">&quot;hello world.&quot;</span> <span class="o">&gt;</span> <span class="n">result</span><span class="o">.</span><span class="n">txt</span>
+      <span class="n">sleep</span> <span class="mi">2</span>
+
+  <span class="n">hello_again</span><span class="p">:</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">hello</span> <span class="n">world</span> <span class="n">again</span>
+    <span class="n">node</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">run</span><span class="p">:</span> <span class="o">|</span>
+      <span class="n">echo</span> <span class="s2">&quot;hello world again.&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">result</span><span class="o">.</span><span class="n">txt</span>
+      <span class="n">sleep</span> <span class="mi">2</span>
+
+<span class="n">epilogue</span><span class="p">:</span>
+  <span class="n">code</span><span class="p">:</span> <span class="o">|</span>
+    <span class="n">echo</span> <span class="s2">&quot;done.&quot;</span>
+    <span class="n">date</span>
+</pre></div>
+</div>
+<p>platformセクションでは、実行するプラットフォームの種類を指定します。この場合は、物性研システムB(ohtaka)での設定をしています。</p>
+<p>prologueセクションでは、バッチジョブの前処理を記述します。タスクを実行する前に実行する共通のコマンドラインを記述します。</p>
+<p>jobsセクションでは、タスクの処理内容を記述します。ジョブで実行する一連のタスクを、タスク名をキー、処理内容を値として記述するテーブルの形式で記述します。</p>
+<p>この例では、最初に&quot;start...&quot;を出力するタスクを start というタスク名で定義しています。
+ここでは <code class="docutils literal notranslate"><span class="pre">parallel</span> <span class="pre">=</span> <span class="pre">false</span></code> に設定しています。この場合、ジョブ単位での並列は行われず、<code class="docutils literal notranslate"><span class="pre">run</span></code> に記述した内容が逐次的に実行されます。</p>
+<p>次に、&quot;hello world.&quot;を出力するタスクを hello world というタスク名で定義しています。
+ここでは <code class="docutils literal notranslate"><span class="pre">parallel</span></code> が設定されていないので、 <code class="docutils literal notranslate"><span class="pre">paralle</span> <span class="pre">=</span> <span class="pre">true</span></code> として扱われます。この場合、ジョブ単位での並列が行われます。
+同様に、次に &quot;hello world again.&quot; を出力するタスクを hello_again というタスク名で定義しています。</p>
+<p>最後に、epilogueセクションでは、バッチジョブの後処理を記述します。タスクを実行した後に実行する共通のコマンドラインを記述します。</p>
+<p>仕様の詳細については <a class="reference internal" href="../filespec/index.html#sec-fileformat"><span class="std std-ref">ファイルフォーマット</span></a> の章を参照してください。</p>
+</section>
+<section id="id3">
+<h2>バッチジョブスクリプトを生成する<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<p>構成定義ファイル(input.yaml)を入力として moller を実行します。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>moller<span class="w"> </span>-o<span class="w"> </span>job.sh<span class="w"> </span>input.yaml
+</pre></div>
+</div>
+<p>バッチジョブスクリプトが生成され出力されます。出力先は構成定義ファイル内のパラメータ、または、コマンドラインの -o または --output オプションで指定するファイルです。
+両方指定されている場合はコマンドラインパラメータが優先されます。いずれも指定がない場合は標準出力に書き出されます。</p>
+<p>必要に応じて mollerで生成したバッチジョブスクリプトを対象のシステムに転送します。
+なお、スクリプトの種類は bash スクリプトです。ジョブ実行時に使用するシェルを bash に設定しておく必要があります。(ログインシェルを csh系などにしている場合は注意)</p>
+</section>
+<section id="id4">
+<h2>リストファイルを作成する<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<p>実行するジョブのリストを作成します。moller では、ジョブごとに個別のディレクトリを用意し、そのディレクトリ内で各ジョブを実行する仕様になっています。
+対象となるディレクトリのリストを格納したファイルを、たとえば以下のコマンドで、リストファイルとして作成します。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>/usr/bin/ls<span class="w"> </span>-1d<span class="w"> </span>&gt;<span class="w"> </span>list.dat
+</pre></div>
+</div>
+<p>チュートリアルには、データセットとリストファイルを作成するユーティリティープログラムが付属しています。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>bash<span class="w"> </span>./make_inputs.sh
+</pre></div>
+</div>
+<p>を実行すると、 <code class="docutils literal notranslate"><span class="pre">output</span></code> ディレクトリの下にデータセットに相当する <code class="docutils literal notranslate"><span class="pre">dataset-0001</span></code> 〜 <code class="docutils literal notranslate"><span class="pre">dataset-0020</span></code> のディレクトリと、リストファイル <code class="docutils literal notranslate"><span class="pre">list.dat</span></code> が作成されます。</p>
+</section>
+<section id="id5">
+<h2>網羅計算を実行する<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<p>mollerで生成したバッチジョブスクリプトをジョブスケジューラに投入します。この例ではジョブスクリプトと入力ファイルを <code class="docutils literal notranslate"><span class="pre">output</span></code> ディレクトリにコピーし、 <code class="docutils literal notranslate"><span class="pre">output</span></code> に移動してジョブを投入しています。</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>cp<span class="w"> </span>job.sh<span class="w"> </span>input.yaml<span class="w"> </span>output/
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>output
+$<span class="w"> </span>sbatch<span class="w"> </span>job.sh<span class="w"> </span>list.dat
+</pre></div>
+</div>
+</div></blockquote>
+<p>ジョブが実行されると、リストに記載されたディレクトリにそれぞれ &quot;result.txt&quot; というファイルが生成されます。
+&quot;result.txt&quot; には、ジョブ実行結果の &quot;hello world.&quot;, &quot;hello world again.&quot; という文字列が出力されていることが確認できます。</p>
+</section>
+<section id="id6">
+<h2>実行状況を確認する<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
+<p>タスクの実行状況はログファイルに出力されます。ログを収集してジョブごとに実行状況を一覧するツール moller_status が用意されています。ジョブを実行するディレクトリで以下を実行します。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>moller_status<span class="w"> </span>input.yaml<span class="w"> </span>list.dat
+</pre></div>
+</div>
+<p>引数には構成定義ファイル input.yaml とリストファイル list.dat を指定します。リストファイルは省略可能で、その場合はログファイルからジョブの情報を収集します。</p>
+<p>出力サンプルを以下に示します。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="n">job</span>          <span class="o">|</span> <span class="n">hello</span>   <span class="o">|</span> <span class="n">hello_again</span>   <span class="o">|</span>
+<span class="o">|--------------|---------|---------------|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0001</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0002</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0003</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0004</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0005</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0006</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0007</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0008</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0009</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0010</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0011</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0012</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0013</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0014</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0015</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0016</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0017</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0018</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0019</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0020</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+</pre></div>
+</div>
+<p>「o」は正常終了したタスク、「x」はエラーになったタスク、「-」は前のタスクがエラーになったためスキップされたタスク、「.」は未実行のタスクを示します。
+今回は全て正常終了していることがわかります。</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Moller Users Guide</a></h1>
+
+
+
+
+
+
+
+
+<h3>ナビゲーション</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">網羅計算ツール (moller)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../about/index.html">1. 概要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basic-usage.html">2. インストールと基本的な使い方</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">3. チュートリアル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../command/index.html">4. コマンドリファレンス</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../filespec/index.html">5. ファイルフォーマット</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../appendix/index.html">6. 拡張ガイド</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">網羅計算ツール (moller)</a><ul>
+  <li><a href="index.html"><span class="section-number">3. </span>チュートリアル</a><ul>
+      <li>Previous: <a href="index.html" title="前の章へ"><span class="section-number">3. </span>チュートリアル</a></li>
+      <li>Next: <a href="hphi.html" title="次の章へ"><span class="section-number">3.2. </span>HPhi による <em>moller</em> 計算の例</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023-, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../../_sources/moller/tutorial/basic.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
