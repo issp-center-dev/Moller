@@ -38,6 +38,7 @@ of The Institute for Solid State Physics, The University of Tokyo.
 
 ## Official page
 
+- [HTP-tools project page](https://www.pasums.issp.u-tokyo.ac.jp/htp-tools/)
 - [Software repository](https://github.com/issp-center-dev/Moller)
 
 ## Authors
@@ -46,8 +47,8 @@ Kazuyoshi Yoshimi (ISSP, Univ. of Tokyo),
 Tatsumi Aoyama (ISSP, Univ. of Tokyo), 
 Yuichi Motoyama (ISSP, Univ. of Tokyo), 
 Masahiro Fukuda (ISSP, Univ. of Tokyo), 
-Tetsuya Fukushima (AIST), 
 Kota Ido (ISSP, Univ. of Tokyo), 
+Tetsuya Fukushima (AIST), 
 Shusuke Kasamatsu (Yamagata University), 
 Takashi Koretsune (Tohoku University), 
 Taisuke Ozaki (ISSP, Univ. of Tokyo)
