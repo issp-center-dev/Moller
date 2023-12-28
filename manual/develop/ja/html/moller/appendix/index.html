@@ -5,15 +5,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>拡張ガイド &#8212; Moller Users Guide 1.0-beta ドキュメント</title>
+    <title>6. 拡張ガイド &#8212; Moller Users Guide 1.0-dev ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=51c57257" />
-    <script src="../../_static/documentation_options.js?v=eb5e0c7f"></script>
+    <script src="../../_static/documentation_options.js?v=3b7831b5"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/translations.js?v=4dbe4bdc"></script>
     <link rel="index" title="索引" href="../../genindex.html" />
     <link rel="search" title="検索" href="../../search.html" />
+    <link rel="prev" title="5. ファイルフォーマット" href="../filespec/index.html" />
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
   
@@ -31,10 +32,187 @@
           <div class="body" role="main">
             
   <section id="id1">
-<h1>拡張ガイド<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
+<h1><span class="section-number">6. </span>拡張ガイド<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
+<p>(註: 以下の内容は moller のバージョンによって変わる可能性があります。)</p>
+<section id="moller">
+<h2><span class="section-number">6.1. </span>mollerによるバルク実行<a class="headerlink" href="#moller" title="Link to this heading">¶</a></h2>
+<p>バルク実行とは、大型のバッチキューに投入した一つのバッチジョブの中で、複数の小さいタスクを並行して実行するというものです。動作のイメージとしては、次のようにN個のタスクをバックグラウンドで実行し同時に処理させ、wait文によりすべてのタスクが終了するまで待ちます。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>task<span class="w"> </span>param_1<span class="w"> </span><span class="p">&amp;</span>
+task<span class="w"> </span>param_2<span class="w"> </span><span class="p">&amp;</span>
+<span class="w">     </span>...
+task<span class="w"> </span>param_N<span class="w"> </span><span class="p">&amp;</span>
+<span class="nb">wait</span>
+</pre></div>
+</div>
+<p>このとき、バッチジョブに割り当てられたノード・コアを適宜分配し、param_1〜param_N のタスクがそれぞれ別のノード・コアで実行されるように配置する必要があります。また、多数のタスクがある時に、割当てリソースに応じて最大N個のタスクが実行されるよう実行を調整することも必要です。</p>
+<p>moller で生成したジョブスクリプトを以下では moller scriptと呼ぶことにします。
+moller script では、タスクの並行実行と制御には GNU parallel [1]を利用します。GNU parallel は param_1〜param_N のリストを受取り、これらを引数としてコマンドを並行して実行するツールです。
+以下は GNU parllel を使った実行イメージで、list.dat の各行に param_1〜param_N を列挙しておきます。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat<span class="w"> </span>list.dat<span class="w"> </span><span class="p">|</span><span class="w"> </span>parallel<span class="w"> </span>-j<span class="w"> </span>N<span class="w"> </span>task
+</pre></div>
+</div>
+<p>同時実行数については、バッチジョブに割当てられたノード数・コア数を実行時に環境変数等から取得し、各タスクの並列度(ノード数・プロセス数・スレッド数)の指定(nodeパラメータ)を元に計算します。</p>
+<p>ノード・コアへのタスクの配置についてはジョブスケジューラによって方法が異なります。SLURM系のジョブスケジューラでは、リソースの排他利用のオプションを使うことで、バッチジョブ内部で発行された複数の srun をジョブスケジューラが適宜配置して実行します。具体的な指定方法はプラットフォームの設定に依存します。</p>
+<p>一方、PBS系のジョブスケジューラはそのような仕組みがなく、リソースの配分をmoller script内部で処理する必要があります。moller scriptでは、バッチジョブに割り当てられた計算ノードとコアをスロットに分割し、GNU parallel で並行処理されるタスクに分配します。スロットへの分割は、実行時に取得される割当てノード・コアとタスクの並列度指定から計算し、テーブルの形で保持します。タスク内部では、mpirun (mpiexec) の引数や環境変数を通じて計算ノードの指定と割当コアのピン留めを行いプログラムを実行します。この処理は使用するMPI実装に依存します。</p>
+<p><strong>参考文献</strong></p>
+<p>[1] <a class="reference external" href="https://www.usenix.org/publications/login/february-2011-volume-36-number-1/gnu-parallel-command-line-power-tool">O. Tange, GNU Parallel - The command-Line Power Tool, ;login: The USENIX Magazine, February 2011:42-47.</a></p>
+</section>
 <section id="id2">
-<h2>他システムで使うには<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
-<p>(TBA)</p>
+<h2><span class="section-number">6.2. </span>mollerの動作について<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<section id="id3">
+<h3>mollerで生成されるスクリプトの構成<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<p>mollerは、入力されたYAMLファイルの内容をもとに、バルク実行のためのジョブスクリプトを生成します。生成されるジョブスクリプトは先頭から順に次のような構成になっています。</p>
+<ol class="arabic">
+<li><p>ヘッダ</p>
+<p>ジョブスケジューラへの指示が記述されます。platform セクションに指定した内容が、ジョブスケジューラの種類に応じた形式に整形されて出力されます。この処理はプラットフォーム依存です。</p>
+</li>
+<li><p>プロローグ</p>
+<p>prologue セクションに指定した内容です。code ブロックの中身がそのまま転記されます。</p>
+</li>
+<li><p>関数の定義</p>
+<p>ジョブスクリプト内部で使う関数および変数の定義が出力されます。関数の概要については次節で説明します。この箇所はプラットフォーム依存です。</p>
+</li>
+<li><p>コマンドライン引数の処理</p>
+<p>SLURM系のジョブスケジューラでは、リストファイルの指定やタスクの再実行などのオプション指定を sbatch コマンドの引数として与えることができます。PBS系のジョブスケジューラでは引数の指定は無視されるため、オプション指定はジョブスクリプトを編集してパラメータをセットする必要があります。</p>
+</li>
+<li><p>タスクの記述</p>
+<p>jobs セクションに記述されるタスクの内容を出力します。タスクが複数ある場合はタスクごとに以下の処理を実行します。</p>
+<blockquote>
+<div><p>parallel = false の場合は run ブロックの中身がそのまま転記されます。</p>
+<p>parallel = true (デフォルト) の場合、task_タスク名 という関数が生成され、並列実行のための前処理と run ブロックの内容が出力されます。並列計算のためのキーワード(<code class="docutils literal notranslate"><span class="pre">srun</span></code> 、 <code class="docutils literal notranslate"><span class="pre">mpiexec</span></code> または <code class="docutils literal notranslate"><span class="pre">mpirun</span></code>)はプラットフォームに応じたコマンドに置き換えられます。関数定義に続いて並列実行のコマンドが書き出されます。</p>
+</div></blockquote>
+</li>
+<li><p>エピローグ</p>
+<p>epilogue セクションに指定した内容です。code ブロックの中身がそのまま転記されます。</p>
+</li>
+</ol>
+</section>
+<section id="moller-script">
+<h3>moller scriptの関数の概要<a class="headerlink" href="#moller-script" title="Link to this heading">¶</a></h3>
+<p>moller script の内部で使用する主な関数の概要を以下に説明します。</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_parallel</span></code></p>
+<p>タスクの内容を記述した関数(タスク関数)を並行実行する関数です。並列度、タスク関数、ステータスファイル名を引数に取ります。内部では <code class="docutils literal notranslate"><span class="pre">_find_multiplicity</span></code> 関数を呼んで多重度を計算し、GNU parallel を起動してタスクを並行実行します。GNU parallel の多段処理に対応するために、タスク関数は <code class="docutils literal notranslate"><span class="pre">_run_parallel_task</span></code> 関数でラップされます。</p>
+<p>プラットフォーム依存性は <code class="docutils literal notranslate"><span class="pre">_find_multiplicity</span></code> および <code class="docutils literal notranslate"><span class="pre">_setup_run_parallel</span></code> 関数としてくくり出しています。</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_find_multiplicity</span></code></p>
+<p>並列実行の多重度を、割当てリソース(ノード数・コア数)とタスクの並列度指定から計算します。PBS系のジョブスケジューラでは、さらに計算ノード・コアをスロットに分割し、テーブルで保持します。
+実行時に環境から取得する情報は次の通りです。</p>
+<ul>
+<li><p>SLURM系</p>
+<blockquote>
+<div><dl class="simple">
+<dt>割当てノード数 _nnodes</dt><dd><p><code class="docutils literal notranslate"><span class="pre">SLURM_NNODES</span></code></p>
+</dd>
+<dt>割当てコア数   _ncores</dt><dd><p><code class="docutils literal notranslate"><span class="pre">SLURM_CPUS_ON_NODE</span></code></p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p>PBS系</p>
+<blockquote>
+<div><dl class="simple">
+<dt>割当てノード _nodes[]</dt><dd><p><code class="docutils literal notranslate"><span class="pre">PBS_NODEFILE</span></code> で指定されるファイルから計算ノードのリストを取得</p>
+</dd>
+<dt>ノード数     _nnodes</dt><dd><p>_nodes[] の項目数</p>
+</dd>
+<dt>割当てコア数 _ncores</dt><dd><dl class="simple">
+<dt>以下の順に検索されます。</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">NCPUS</span></code> (PBS Professional)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OMP_NUM_THREADS</span></code></p></li>
+<li><p>platform セクションの core 指定(スクリプト中に moller_core変数として書き込まれる)</p></li>
+<li><p>ヘッダの ncpus または ppn パラメータ</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_setup_run_parallel</span></code></p>
+<p>GNU parallel による並行実行を開始する前にいくつか処理を追加するために呼ばれます。PBS系ではスロットに分割されたノード・コアのテーブルをタスク関数から参照できるよう export します。SLURM系では実行する内容はありません。</p>
+</li>
+</ul>
+<p>各タスクに対応するタスク関数の構成については次の通りです。</p>
+<ul class="simple">
+<li><p>タスク関数の引数は 1) 並列度指定(ノード数・プロセス数・スレッド数) 2) 実行ディレクトリ 3) GNU parallel のスロットID です。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_setup_taskenv</span></code> で実行環境の設定を行います。この関数はプラットフォーム依存です。PBS系ではスロットIDに基づいて計算ノード・コアをテーブルから取得します。SLURM系では実行する内容はありません。</p></li>
+<li><p>直前に実行するタスクが正常終了したかどうかを <code class="docutils literal notranslate"><span class="pre">_is_ready</span></code> 関数を呼んでチェックします。正常終了している場合はタスクの処理を継続します。それ以外の場合は -1 のステータスでタスクの処理を中断します。</p></li>
+<li><p>code ブロックの内容を転記します。その際に、並列計算のためのキーワード(<code class="docutils literal notranslate"><span class="pre">srun</span></code> 、 <code class="docutils literal notranslate"><span class="pre">mpiexec</span></code> または <code class="docutils literal notranslate"><span class="pre">mpirun</span></code>)はプラットフォームに応じたコマンドに置き換えられます。</p></li>
+</ul>
+</section>
+</section>
+<section id="id4">
+<h2><span class="section-number">6.3. </span>mollerを他のシステムで使うには<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<p>mollerには現在、物性研スーパーコンピュータシステム ohtaka および kugui 向けの設定が用意されています。mollerを他のシステムで使うための拡張ガイドを以下で説明します。</p>
+<section id="id5">
+<h3>クラス構成<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<p>mollerの構成のうちプラットフォーム依存の部分は <code class="docutils literal notranslate"><span class="pre">platform/</span></code> ディレクトリにまとめています。
+クラス構成は次のとおりです。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Platform (base.py)
+ |
+ +-- BaseSlurm (base_slurm.py) ------- Ohtaka (ohtaka.py)
+ |
+ +-- BasePBS (base_pbs.py) --+-------- Kugui (kugui.py)
+ |                           |
+ |                           `-------- Pbs (pbs.py)
+ |
+ `-- BaseDefault (base_default.py) --- DefaultPlatform (default.py)
+</pre></div>
+</div>
+<p>プラットフォームの選択についてはファクトリが用意されています。<code class="docutils literal notranslate"><span class="pre">register_platform(登録名,</span> <span class="pre">クラス名)</span></code> でクラスをファクトリに登録し、 <code class="docutils literal notranslate"><span class="pre">platform/__init__.py</span></code> にクラスを import しておくと、入力パラメータファイルの platform.system パラメータに指定できるようになります。</p>
+</section>
+<section id="slurm">
+<h3>SLURM系ジョブスケジューラ<a class="headerlink" href="#slurm" title="Link to this heading">¶</a></h3>
+<p>SLURM系のジョブスケジューラを利用している場合、BaseSlurm クラスを元にシステム固有の設定を行います。
+並列計算を実行するキーワードを置き換える文字列は <code class="docutils literal notranslate"><span class="pre">parallel_command()</span></code> メソッドの戻り値で与えます。リソースの排他利用を行うための srun のパラメータをここに指定します。
+具体例は ohtaka.py を参照してください。</p>
+</section>
+<section id="pbs">
+<h3>PBS系ジョブスケジューラ<a class="headerlink" href="#pbs" title="Link to this heading">¶</a></h3>
+<p>PBS系のジョブスケジューラ (PBS Professional, OpenPBS, Torque など)を利用している場合、BasePBS クラスを元にシステム固有の設定を行います。</p>
+<p>PBS系ではバッチジョブのノード数の指定の仕方に2通りあり、PBS Professional は select=N:ncpus=n という書式で指定しますが、Torque などは node=N:ppn=n と記述します。後者の指定を用いる場合は <code class="docutils literal notranslate"><span class="pre">self.pbs_use_old_format</span> <span class="pre">=</span> <span class="pre">True</span></code> をセットします。</p>
+<p>計算ノードのコア数は node パラメータで指定できますが、対象システムを限定してコア数のデフォルト値を設定しておくこともできます。kugui.py ではノードあたり128コアを設定しています。</p>
+</section>
+<section id="id6">
+<h3>細かいカスタマイズが必要な場合<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
+<p>基底クラスを参照して必要なメソッドを再定義します。メソッド構成は次のようになっています。</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">setup</span></code></p>
+<p>platform セクションのパラメータの取り出しなどを行います。</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">parallel_command</span></code></p>
+<p>並列計算のキーワード (<code class="docutils literal notranslate"><span class="pre">srun</span></code>, <code class="docutils literal notranslate"><span class="pre">mpiexec</span></code>, <code class="docutils literal notranslate"><span class="pre">mpirun</span></code>) を置き換える文字列を返します。</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">generate_header</span></code></p>
+<p>ジョブスケジューラオプションの指定を記述したヘッダを生成します。</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">generate_function</span></code></p>
+<p>moller script 内部で使用する関数の定義を生成します。変数および関数の実体はそれぞれ以下のメソッドで作られます。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">generate_variable</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">generate_function_body</span></code></p></li>
+</ul>
+<p>それぞれの関数は埋め込み文字列としてクラス内で定義されています。</p>
+</li>
+</ul>
+</section>
+<section id="id7">
+<h3>新しいタイプのジョブスケジューラに対応させるには<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
+<p>moller scriptの動作のうちプラットフォーム依存な箇所は、並行実行の多重度の計算、リソース配置に関する部分、並列計算のコマンドです。</p>
+<ul class="simple">
+<li><p>割当てノード・ノード数・ノードあたりのコア数を実行時に環境変数等から取得する方法</p></li>
+<li><p>並列計算を実行するコマンド (mpiexec等) と、実行ホストやコア割当の指定のしかた</p></li>
+</ul>
+<p>これらをもとにmoller script内で使う関数を作成します。
+<code class="docutils literal notranslate"><span class="pre">printenv</span></code> コマンドでジョブスクリプト内で有効な環境変数の一覧を取得できます。</p>
+</section>
+<section id="id8">
+<h3>トラブルシューティング<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
+<p>moller script内の <code class="docutils literal notranslate"><span class="pre">_debug</span></code> 変数を 1 にセットすると、バッチジョブ実行時にデバッグ出力が書き出されます。もしジョブがうまく実行されないときは、デバッグ出力を有効にして、内部パラメータが正しくセットされているかを確認してみてください。</p>
+</section>
 </section>
 </section>
 
@@ -56,14 +234,25 @@
 
 <h3>ナビゲーション</h3>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../index.html">網羅計算ツール (moller)</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">網羅計算ツール (moller)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../about/index.html">1. 概要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basic-usage.html">2. インストールと基本的な使い方</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial/index.html">3. チュートリアル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../command/index.html">4. コマンドリファレンス</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../filespec/index.html">5. ファイルフォーマット</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6. 拡張ガイド</a></li>
+</ul>
+</li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">網羅計算ツール (moller)</a><ul>
+      <li>Previous: <a href="../filespec/index.html" title="前の章へ"><span class="section-number">5. </span>ファイルフォーマット</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>
