@@ -60,7 +60,9 @@ mollerは、入力されたYAMLファイルの内容をもとに、バルク実�
 
 #. コマンドライン引数の処理
 
-   SLURM系のジョブスケジューラでは、リストファイルの指定やタスクの再実行などのオプション指定を sbatch コマンドの引数として与えることができます。PBS系のジョブスケジューラでは引数の指定は無視されるため、オプション指定はジョブスクリプトを編集してパラメータをセットする必要があります。
+   SLURM系のジョブスケジューラでは、リストファイルの指定やタスクの再実行などのオプション指定を sbatch コマンドの引数として与えることができます。
+
+   PBS系のジョブスケジューラでは引数の指定は無視されるため、オプション指定はジョブスクリプトを編集してパラメータをセットする必要があります。リストファイルのファイル名はデフォルトで ``list.dat`` です。また、タスクのリトライを行うには ``retry`` 変数を ``1`` にセットします。
 
 #. タスクの記述
 
@@ -141,20 +143,34 @@ mollerには現在、物性研スーパーコンピュータシステム ohtaka 
 mollerの構成のうちプラットフォーム依存の部分は ``platform/`` ディレクトリにまとめています。
 クラス構成は次のとおりです。
 
-::
+.. graphviz::
 
-  Platform (base.py)
-   |
-   +-- BaseSlurm (base_slurm.py) ------- Ohtaka (ohtaka.py)
-   |
-   +-- BasePBS (base_pbs.py) --+-------- Kugui (kugui.py)
-   |                           |
-   |                           `-------- Pbs (pbs.py)
-   |
-   `-- BaseDefault (base_default.py) --- DefaultPlatform (default.py)
+   digraph class_diagram {
+   size="5,5"
+   node[shape=record,style=filled,fillcolor=gray95]
+   edge[dir=back,arrowtail=empty]
 
+   Platform[label="{Platform (base.py)}"]
+   BaseSlurm[label="{BaseSlurm (base_slurm.py)}"]
+   BasePBS[label="{BasePBS (base_pbs.py)}"]
+   BaseDefault[label="{BaseDefault (base_default.py)}"]
 
-プラットフォームの選択についてはファクトリが用意されています。``register_platform(登録名, クラス名)`` でクラスをファクトリに登録し、 ``platform/__init__.py`` にクラスを import しておくと、入力パラメータファイルの platform.system パラメータに指定できるようになります。
+   Ohtaka[label="{Ohtaka (ohtaka.py)}"]
+   Kugui[label="{Kugui (kugui.py)}"]
+   Pbs[label="{Pbs (pbs.py)}"]
+   Default[label="{DefaultPlatform (default.py)}"]
+
+   Platform->BaseSlurm
+   Platform->BasePBS
+   Platform->BaseDefault
+
+   BaseSlurm->Ohtaka
+   BasePBS->Kugui
+   BasePBS->Pbs
+   BaseDefault->Default
+   }
+   
+プラットフォームの選択についてはファクトリが用意されています。``register_platform(登録名, クラス名)`` でクラスをファクトリに登録し、 ``platform/__init__.py`` にクラスを import しておくと、入力パラメータファイル中で platform セクションの system パラメータに指定できるようになります。
 
 
 SLURM系ジョブスケジューラ
