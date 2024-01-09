@@ -7,7 +7,8 @@
 
     <title>6. 拡張ガイド &#8212; Moller Users Guide 1.0-beta ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=51c57257" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=94bc0932" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
     <script src="../../_static/documentation_options.js?v=eb5e0c7f"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
@@ -18,8 +19,9 @@
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   
@@ -73,7 +75,8 @@ moller script では、タスクの並行実行と制御には GNU parallel [1]�
 <p>ジョブスクリプト内部で使う関数および変数の定義が出力されます。関数の概要については次節で説明します。この箇所はプラットフォーム依存です。</p>
 </li>
 <li><p>コマンドライン引数の処理</p>
-<p>SLURM系のジョブスケジューラでは、リストファイルの指定やタスクの再実行などのオプション指定を sbatch コマンドの引数として与えることができます。PBS系のジョブスケジューラでは引数の指定は無視されるため、オプション指定はジョブスクリプトを編集してパラメータをセットする必要があります。</p>
+<p>SLURM系のジョブスケジューラでは、リストファイルの指定やタスクの再実行などのオプション指定を sbatch コマンドの引数として与えることができます。</p>
+<p>PBS系のジョブスケジューラでは引数の指定は無視されるため、オプション指定はジョブスクリプトを編集してパラメータをセットする必要があります。リストファイルのファイル名はデフォルトで <code class="docutils literal notranslate"><span class="pre">list.dat</span></code> です。また、タスクのリトライを行うには <code class="docutils literal notranslate"><span class="pre">retry</span></code> 変数を <code class="docutils literal notranslate"><span class="pre">1</span></code> にセットします。</p>
 </li>
 <li><p>タスクの記述</p>
 <p>jobs セクションに記述されるタスクの内容を出力します。タスクが複数ある場合はタスクごとに以下の処理を実行します。</p>
@@ -151,18 +154,31 @@ moller script では、タスクの並行実行と制御には GNU parallel [1]�
 <h3>クラス構成<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
 <p>mollerの構成のうちプラットフォーム依存の部分は <code class="docutils literal notranslate"><span class="pre">platform/</span></code> ディレクトリにまとめています。
 クラス構成は次のとおりです。</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Platform (base.py)
- |
- +-- BaseSlurm (base_slurm.py) ------- Ohtaka (ohtaka.py)
- |
- +-- BasePBS (base_pbs.py) --+-------- Kugui (kugui.py)
- |                           |
- |                           `-------- Pbs (pbs.py)
- |
- `-- BaseDefault (base_default.py) --- DefaultPlatform (default.py)
-</pre></div>
-</div>
-<p>プラットフォームの選択についてはファクトリが用意されています。<code class="docutils literal notranslate"><span class="pre">register_platform(登録名,</span> <span class="pre">クラス名)</span></code> でクラスをファクトリに登録し、 <code class="docutils literal notranslate"><span class="pre">platform/__init__.py</span></code> にクラスを import しておくと、入力パラメータファイルの platform.system パラメータに指定できるようになります。</p>
+<div class="graphviz"><img src="../../_images/graphviz-06368183531b8fc81c8d91cef6b17e1dc3c86493.png" alt="digraph class_diagram {
+size=&quot;5,5&quot;
+node[shape=record,style=filled,fillcolor=gray95]
+edge[dir=back,arrowtail=empty]
+
+Platform[label=&quot;{Platform (base.py)}&quot;]
+BaseSlurm[label=&quot;{BaseSlurm (base_slurm.py)}&quot;]
+BasePBS[label=&quot;{BasePBS (base_pbs.py)}&quot;]
+BaseDefault[label=&quot;{BaseDefault (base_default.py)}&quot;]
+
+Ohtaka[label=&quot;{Ohtaka (ohtaka.py)}&quot;]
+Kugui[label=&quot;{Kugui (kugui.py)}&quot;]
+Pbs[label=&quot;{Pbs (pbs.py)}&quot;]
+Default[label=&quot;{DefaultPlatform (default.py)}&quot;]
+
+Platform-&gt;BaseSlurm
+Platform-&gt;BasePBS
+Platform-&gt;BaseDefault
+
+BaseSlurm-&gt;Ohtaka
+BasePBS-&gt;Kugui
+BasePBS-&gt;Pbs
+BaseDefault-&gt;Default
+}" class="graphviz" /></div>
+<p>プラットフォームの選択についてはファクトリが用意されています。<code class="docutils literal notranslate"><span class="pre">register_platform(登録名,</span> <span class="pre">クラス名)</span></code> でクラスをファクトリに登録し、 <code class="docutils literal notranslate"><span class="pre">platform/__init__.py</span></code> にクラスを import しておくと、入力パラメータファイル中で platform セクションの system パラメータに指定できるようになります。</p>
 </section>
 <section id="slurm">
 <h3>SLURM系ジョブスケジューラ<a class="headerlink" href="#slurm" title="Link to this heading">¶</a></h3>
@@ -279,11 +295,11 @@ moller script では、タスクの並行実行と制御には GNU parallel [1]�
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2023-, The University of Tokyo.
+      &#169;2023-, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.15</a>
       
       |
       <a href="../../_sources/moller/appendix/index.rst.txt"
