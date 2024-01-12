@@ -20,8 +20,7 @@ class BaseDefault(Platform):
         shebang = '#!/bin/bash\n'
         fp.write(shebang)
         fp.write('\n')
-        fp.write('export _debug=1\n')
-        fp.write('\n')
+        fp.write(self.generate_header_append())
 
     function_find_multiplicity = r"""
 function _find_multiplicity () {
@@ -78,50 +77,57 @@ function _setup_run_parallel () {
 export -f _setup_run_parallel
     """
 
+    function_main_pre = r"""
+_initargs="$@"
+"""
+
     function_main = r"""
 #--- initialize
 _setup_max_njob
 
 #--- parse options
-initargs="$@"
 scriptargs=""
 retry=0
 
-while [ -n "$*" ]
-do
-    case "$1" in
-	-h | --help | -help)
-	    echo $0 [--retry] listfile [...]
-	    exit 0
-	    ;;
-	--retry | -retry)
-            retry=1
-	    shift
-	    ;;
-	--node | -node)
-            _nnodes=$2
-            shift
-	    shift
-	    ;;
-	--core | -core)
-            _ncores=$2
-            shift
-	    shift
-	    ;;
-	--)
-	    shift
-	    break
-	    ;;
-	-*)
-	    echo "unknown option: $1"
-	    exit 1
-	    ;;
-	*)
-	    scriptargs="$scriptargs $1"
-	    shift
-	    ;;
-    esac
-done
+function argparse () {
+    while [ -n "$*" ]
+    do
+        case "$1" in
+            -h | --help | -help)
+                echo $0 [--retry] listfile [...]
+                exit 0
+                ;;
+            --retry | -retry)
+                retry=1
+                shift
+                ;;
+            --node | -node)
+                _nnodes=$2
+                shift
+                shift
+                ;;
+            --core | -core)
+                _ncores=$2
+                shift
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            -*)
+                echo "unknown option: $1"
+                exit 1
+                ;;
+            *)
+                scriptargs="$scriptargs $1"
+                shift
+                ;;
+        esac
+    done
+}
+
+argparse $_initargs
 
 if [ $_nnodes -eq 0 ]; then
     _nnodes=1
@@ -174,6 +180,12 @@ mplist=( `cat $scriptargs | xargs` )
         str += self.generate_variable()
         str += self.generate_function_body()
         str += self.function_main
+        return str
+
+    def generate_header_append(self):
+        str = ''
+        str += 'export _debug=0\n'
+        str += self.function_main_pre
         return str
 
     @classmethod

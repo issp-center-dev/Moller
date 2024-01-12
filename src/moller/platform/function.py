@@ -123,40 +123,47 @@ function run_parallel () {
 export -f run_parallel
     """
 
-    function_main = r"""    
+    function_main_pre = r"""
+_initargs="$@"
+"""
+
+    function_main = r"""
 #--- initialize
 _setup_max_njob
 
 #--- parse options
-initargs="$@"
 scriptargs=""
 retry=0
 
-while [ -n "$*" ]
-do
-    case "$1" in
-	-h | --help | -help)
-	    echo $0 [--retry] listfile [...]
-	    exit 0
-	    ;;
-	--retry | -retry)
-            retry=1
-	    shift
-	    ;;
-	--)
-	    shift
-	    break
-	    ;;
-	-*)
-	    echo "unknown option: $1"
-	    exit 1
-	    ;;
-	*)
-	    scriptargs="$scriptargs $1"
-	    shift
-	    ;;
-    esac
-done
+function argparse () {
+    while [ -n "$*" ]
+    do
+        case "$1" in
+            -h | --help | -help)
+                echo $0 [--retry] listfile [...]
+                exit 0
+                ;;
+            --retry | -retry)
+                retry=1
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            -*)
+                echo "unknown option: $1"
+                exit 1
+                ;;
+            *)
+                scriptargs="$scriptargs $1"
+                shift
+                ;;
+        esac
+    done
+}
+
+argparse $_initargs
 
 if [ -z $scriptargs ]; then
     #echo "no listfile specified"
@@ -170,6 +177,23 @@ if [ -z $scriptargs ]; then
     fi
 fi
 
+_resume_opt="--resume"
+if [ $retry -gt 0 ]; then
+    _resume_opt="--resume-failed"
+fi
+
+mplist=( `cat $scriptargs | xargs` )
+"""
+
+    function_main_noargs = r"""
+#--- initialize
+_setup_max_njob
+
+#--- parameters
+retry=0
+scriptargs="list.dat"
+
+#---
 _resume_opt="--resume"
 if [ $retry -gt 0 ]; then
     _resume_opt="--resume-failed"

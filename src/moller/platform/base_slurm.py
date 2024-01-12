@@ -45,7 +45,7 @@ class BaseSlurm(Platform):
 
         fp.write(shebang)
         fp.write('\n'.join([ sched_key + s for s in sched_params if s is not None ]) + '\n\n')
-        fp.write('export _debug=0\n\n')
+        fp.write(self.generate_header_append())
 
     def generate_queue_line(self):
         return "-p {}".format(self.queue) if self.queue else None
@@ -135,6 +135,12 @@ export -f _setup_run_parallel
         str += self.generate_variable()
         str += self.generate_function_body()
         str += ScriptFunction.function_main
+        return str
+
+    def generate_header_append(self):
+        str = ''
+        str += 'export _debug=0\n'
+        str += ScriptFunction.function_main_pre + '\n'
         return str
         
     @classmethod

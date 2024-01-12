@@ -46,8 +46,7 @@ class BasePBS(Platform):
 
         fp.write(shebang)
         fp.write('\n'.join([ sched_key + s for s in sched_params if s is not None ]) + '\n\n')
-        fp.write('export _debug=0\n\n')
-        fp.write('cd $PBS_O_WORKDIR\n\n')
+        fp.write(self.generate_header_append())
 
     def generate_queue_line(self):
         return "-q {}".format(self.queue) if self.queue else None
@@ -288,7 +287,13 @@ fi
         str += ScriptFunction.function_setup_vars
         str += self.generate_variable()
         str += self.generate_function_body()
-        str += ScriptFunction.function_main
+        str += ScriptFunction.function_main_noargs
+        return str
+
+    def generate_header_append(self):
+        str = ''
+        str += 'export _debug=0\n\n'
+        str += 'cd $PBS_O_WORKDIR\n\n'
         return str
         
     @classmethod
