@@ -179,23 +179,26 @@ fi
 
 _resume_opt="--resume"
 if [ $retry -gt 0 ]; then
+    echo "INFO: retry enabled"
     _resume_opt="--resume-failed"
 fi
 
 mplist=( `cat $scriptargs | xargs` )
 """
 
+    function_main_noargs_pre = r"""
+#--- parameters
+retry=0
+scriptargs="list.dat"
+"""
+
     function_main_noargs = r"""
 #--- initialize
 _setup_max_njob
 
-#--- parameters
-retry=0
-scriptargs="list.dat"
-
-#---
 _resume_opt="--resume"
 if [ $retry -gt 0 ]; then
+    echo "INFO: retry enabled"
     _resume_opt="--resume-failed"
 fi
 

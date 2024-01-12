@@ -153,6 +153,7 @@ fi
 
 _resume_opt="--resume"
 if [ $retry -gt 0 ]; then
+    echo "INFO: retry enabled"
     _resume_opt="--resume-failed"
 fi
 

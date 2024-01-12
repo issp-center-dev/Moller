@@ -189,11 +189,13 @@ class ScriptGenerator:
 
     def generate_check_logfile(self, log_file_list):
         func_lines = []
-        func_lines.append('_logfile_count=0')
+        func_lines.append('if [ $retry -gt 0 ]; then\n    :\nelse')
+        func_lines.append('    _logfile_count=0')
         for log_file in log_file_list:
-            func_lines.append('if [ -f {} ]; then\n    _logfile_count=$((_logfile_count + 1))\n    echo "INFO: status file {} found."\nfi'.format(log_file, log_file))
-        func_lines.append('if [ $_logfile_count -gt 0 ]; then')
-        func_lines.append('    echo "INFO: job status file found. make sure it is resume/retry run."')
+            func_lines.append('    if [ -f {} ]; then\n        _logfile_count=$((_logfile_count + 1))\n        # echo "INFO: status file {} found."\n    fi'.format(log_file, log_file))
+        func_lines.append('    if [ $_logfile_count -gt 0 ]; then')
+        func_lines.append('        echo "INFO: job status file found. make sure it is resume/retry run."')
+        func_lines.append('    fi')
         func_lines.append('fi')
         return '\n'.join(func_lines) + '\n'
 

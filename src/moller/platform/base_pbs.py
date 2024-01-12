@@ -292,7 +292,8 @@ fi
 
     def generate_header_append(self):
         str = ''
-        str += 'export _debug=0\n\n'
+        str += 'export _debug=0\n'
+        str += ScriptFunction.function_main_noargs_pre + "\n\n"
         str += 'cd $PBS_O_WORKDIR\n\n'
         return str
         
