@@ -10,5 +10,16 @@ def convert_hhmmss_to_seconds(x):
     return s
 
 def convert_seconds_to_hhmmss(x):
-    return datetime.timedelta(seconds=x)
+    sec = x % 60
+    min = (x // 60) % 60
+    #hour = (x // 60 // 60) % 24
+    #day = (x // 60 // 60 // 24)
+    hour = (x // 60 // 60)
+    day = 0
+
+    if day > 0:
+        s = "{:d}+{:02d}:{:02d}:{:02d}".format(day,hour,min,sec)
+    else:
+        s = "{:02d}:{:02d}:{:02d}".format(hour,min,sec)
+    return s
 
