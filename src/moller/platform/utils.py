@@ -18,7 +18,7 @@ def convert_seconds_to_hhmmss(x):
     day = 0
 
     if day > 0:
-        s = "{:d}+{:02d}:{:02d}:{:02d}".format(day,hour,min,sec)
+        s = "{:d}-{:02d}:{:02d}:{:02d}".format(day,hour,min,sec)
     else:
         s = "{:02d}:{:02d}:{:02d}".format(hour,min,sec)
     return s

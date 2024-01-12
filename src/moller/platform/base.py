@@ -38,10 +38,17 @@ class Platform:
         self.nnode = nnode
         self.ncore = ncore
 
-        if 'elapsed' not in info:
-            msg = 'elapsed time not specified'
-            logger.warning(msg)
-        self.elapsed = convert_hhmmss_to_seconds(info.get('elapsed', '0'))
+        if "elapsed" in info:
+            elapsed = info.get("elapsed", None)
+        elif "walltime" in info:
+            elapsed = info.get("walltime", None)
+        else:
+            elapsed = None
+
+        if elapsed:
+            self.elapsed = convert_hhmmss_to_seconds(elapsed)
+        else:
+            self.elapsed = None
 
         if 'job_name' in info:
             self.job_name = info['job_name']
