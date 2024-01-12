@@ -57,9 +57,9 @@ class BasePBS(Platform):
             if self.nnode is None:
                 return None
             if self.ncore is not None:
-                return '-l node={}:ppn={}'.format(self.nnode, self.ncore)
+                return '-l nodes={}:ppn={}'.format(self.nnode, self.ncore)
             else:
-                return '-l node={}'.format(self.nnode)
+                return '-l nodes={}'.format(self.nnode)
         else:
             if self.nnode is None:
                 return None
