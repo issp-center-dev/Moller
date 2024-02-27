@@ -78,7 +78,7 @@ A list of jobs is to be created. ``moller`` is designed so that each job is exec
 
 .. code-block:: bash
 
-  $ /usr/bin/ls -1d > list.dat
+  $ /usr/bin/ls -1d * > list.dat
 
 In this tutorial, an utility script ``make_inputs.sh`` is enclosed which generates datasets and a list file.
   
@@ -128,3 +128,34 @@ An example of the output is shown below:
 
 where "o" corresponds to a task that has been completed successfully, "x" corresponds to a failed task, "-" corresponds to a skipped task because the previous task has been terminated with errors, and "." corresponds to a task yet unexecuted.
 In the above example, the all tasks have been completed successfully.
+
+
+Rerun failed tasks
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If a task fails, the subsequent tasks within the job will not be executed.
+The following is an example of job status in which each task fails by 10% change.
+
+.. literalinclude:: ../../../../tutorial/moller/reference/status_failed.txt
+
+There, the jobs of dataset_0003 and dataset_0004 failed at task1, and the subsequent task2 and task3 were not executed. The other jobs were successful at task1, and proceeded to task2.
+In this way, each job is executed independently of other jobs.
+
+Users can rerun the failed tasks by submitting the batch job with the retry option.
+For SLURM job scheduler (e.g. used in ISSP system B), resubmit the job as follows:
+
+.. code-block:: bash
+
+  $ sbatch job.sh --retry list.dat
+
+For PBS job scheduler (e.g. used in ISSP system C), edit the job script so that the line ``retry=0`` is replaced by ``retry=1``, and resubmit the job.
+
+.. literalinclude:: ../../../../tutorial/moller/reference/status_retry.txt
+
+The tasks that have failed will be executed in the second run.
+In the above example, the task1 for dataset_0003 was successful, but the task2 failed.
+For dataset_0004, task1, task2, and task3 were successfully executed.
+For the jobs of datasets whose tasks have already finished successfully, the second run will not do anything.
+
+N.B. the list file must not be modified on the rerun. The jobs are managed according to the order of entries in the list file, and therefore, if the order is changed, the jobs will not be executed properly.
+

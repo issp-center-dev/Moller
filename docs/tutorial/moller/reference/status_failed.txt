@@ -1,0 +1,22 @@
+| job          | task1   | task2   | task3   |
+|--------------|---------|---------|---------|
+| dataset_0001 | o       | o       | o       |
+| dataset_0002 | o       | x       | -       |
+| dataset_0003 | x       | -       | -       |
+| dataset_0004 | x       | -       | -       |
+| dataset_0005 | o       | o       | o       |
+| dataset_0006 | o       | o       | o       |
+| dataset_0007 | o       | x       | -       |
+| dataset_0008 | o       | o       | o       |
+| dataset_0009 | o       | o       | x       |
+| dataset_0010 | o       | o       | o       |
+| dataset_0011 | o       | o       | o       |
+| dataset_0012 | o       | o       | o       |
+| dataset_0013 | o       | x       | -       |
+| dataset_0014 | o       | o       | o       |
+| dataset_0015 | o       | o       | o       |
+| dataset_0016 | o       | o       | o       |
+| dataset_0017 | o       | o       | o       |
+| dataset_0018 | o       | o       | o       |
+| dataset_0019 | o       | o       | o       |
+| dataset_0020 | o       | o       | o       |
