@@ -92,7 +92,7 @@ HTML形式で出力します。</p></li>
 <p>mollerの構成定義ファイルを指定します。</p>
 </li>
 <li><p>list_file</p>
-<p>ジョブのリストを格納したファイルを指定します。指定がない場合は、バッチジョブから出力されるログファイル log_{task}.dat から収集します。</p>
+<p>ジョブのリストを格納したファイルを指定します。指定がない場合は、バッチジョブから出力されるログファイル stat_{task}.dat から収集します。</p>
 </li>
 <li><p>-o, --output output_file</p>
 <p>出力先のファイル名を指定します。指定がない場合は標準出力に書き出されます。</p>
@@ -121,7 +121,7 @@ HTML形式で出力します。</p></li>
 </div></blockquote>
 <p>ファイル:</p>
 <blockquote>
-<div><p>mollerで生成したジョブスクリプトを用いてプログラムを並列実行すると、実行状況がログファイル log_{task}.dat に出力されます。moller_status はこのファイルを集計し、読みやすい形式に整形します。</p>
+<div><p>mollerで生成したジョブスクリプトを用いてプログラムを並列実行すると、実行状況がログファイル stat_{task}.dat に出力されます。moller_status はこのファイルを集計し、読みやすい形式に整形します。</p>
 </div></blockquote>
 </section>
 </section>
@@ -194,7 +194,7 @@ HTML形式で出力します。</p></li>
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.15</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
       |
       <a href="../../_sources/moller/command/index.rst.txt"

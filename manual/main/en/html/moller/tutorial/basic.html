@@ -124,7 +124,7 @@ It details the common command line to be executed after running the task.</p>
 <section id="create-list-file">
 <h2>Create list file<a class="headerlink" href="#create-list-file" title="Link to this heading">¶</a></h2>
 <p>A list of jobs is to be created. <code class="docutils literal notranslate"><span class="pre">moller</span></code> is designed so that each job is executed within a directory prepared for the job with the job name. The job list can be created, for example, by the following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>/usr/bin/ls<span class="w"> </span>-1d<span class="w"> </span>&gt;<span class="w"> </span>list.dat
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>/usr/bin/ls<span class="w"> </span>-1d<span class="w"> </span>*<span class="w"> </span>&gt;<span class="w"> </span>list.dat
 </pre></div>
 </div>
 <p>In this tutorial, an utility script <code class="docutils literal notranslate"><span class="pre">make_inputs.sh</span></code> is enclosed which generates datasets and a list file.</p>
@@ -183,6 +183,72 @@ You can confirm that the ‘result.txt’ contains the strings ‘hello world.�
 </div>
 <p>where “o” corresponds to a task that has been completed successfully, “x” corresponds to a failed task, “-” corresponds to a skipped task because the previous task has been terminated with errors, and “.” corresponds to a task yet unexecuted.
 In the above example, the all tasks have been completed successfully.</p>
+</section>
+<section id="rerun-failed-tasks">
+<h2>Rerun failed tasks<a class="headerlink" href="#rerun-failed-tasks" title="Link to this heading">¶</a></h2>
+<p>If a task fails, the subsequent tasks within the job will not be executed.
+The following is an example of job status in which each task fails by 10% change.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="n">job</span>          <span class="o">|</span> <span class="n">task1</span>   <span class="o">|</span> <span class="n">task2</span>   <span class="o">|</span> <span class="n">task3</span>   <span class="o">|</span>
+<span class="o">|--------------|---------|---------|---------|</span>
+<span class="o">|</span> <span class="n">dataset_0001</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0002</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">x</span>       <span class="o">|</span> <span class="o">-</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0003</span> <span class="o">|</span> <span class="n">x</span>       <span class="o">|</span> <span class="o">-</span>       <span class="o">|</span> <span class="o">-</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0004</span> <span class="o">|</span> <span class="n">x</span>       <span class="o">|</span> <span class="o">-</span>       <span class="o">|</span> <span class="o">-</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0005</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0006</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0007</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">x</span>       <span class="o">|</span> <span class="o">-</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0008</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0009</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">x</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0010</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0011</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0012</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0013</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">x</span>       <span class="o">|</span> <span class="o">-</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0014</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0015</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0016</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0017</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0018</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0019</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0020</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+</pre></div>
+</div>
+<p>There, the jobs of dataset_0003 and dataset_0004 failed at task1, and the subsequent task2 and task3 were not executed. The other jobs were successful at task1, and proceeded to task2.
+In this way, each job is executed independently of other jobs.</p>
+<p>Users can rerun the failed tasks by submitting the batch job with the retry option.
+For SLURM job scheduler (e.g. used in ISSP system B), resubmit the job as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>sbatch<span class="w"> </span>job.sh<span class="w"> </span>--retry<span class="w"> </span>list.dat
+</pre></div>
+</div>
+<p>For PBS job scheduler (e.g. used in ISSP system C), edit the job script so that the line <code class="docutils literal notranslate"><span class="pre">retry=0</span></code> is replaced by <code class="docutils literal notranslate"><span class="pre">retry=1</span></code>, and resubmit the job.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="n">job</span>          <span class="o">|</span> <span class="n">task1</span>   <span class="o">|</span> <span class="n">task2</span>   <span class="o">|</span> <span class="n">task3</span>   <span class="o">|</span>
+<span class="o">|--------------|---------|---------|---------|</span>
+<span class="o">|</span> <span class="n">dataset_0001</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0002</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">x</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0003</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">x</span>       <span class="o">|</span> <span class="o">-</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0004</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0005</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0006</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0007</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0008</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0009</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0010</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0011</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0012</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0013</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0014</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0015</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0016</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0017</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0018</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0019</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0020</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+</pre></div>
+</div>
+<p>The tasks that have failed will be executed in the second run.
+In the above example, the task1 for dataset_0003 was successful, but the task2 failed.
+For dataset_0004, task1, task2, and task3 were successfully executed.
+For the jobs of datasets whose tasks have already finished successfully, the second run will not do anything.</p>
+<p>N.B. the list file must not be modified on the rerun. The jobs are managed according to the order of entries in the list file, and therefore, if the order is changed, the jobs will not be executed properly.</p>
 </section>
 </section>
 
@@ -256,7 +322,7 @@ In the above example, the all tasks have been completed successfully.</p>
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.15</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
       |
       <a href="../../_sources/moller/tutorial/basic.rst.txt"
