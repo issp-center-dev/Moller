@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>3.1. Basic usage &#8212; Moller Users Guide 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=94bc0932" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+    <script src="../../_static/documentation_options.js?v=8d563738"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="3.2. Example for moller calculation with HPhi" href="hphi.html" />
+    <link rel="prev" title="3. Tutorial" href="index.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="basic-usage">
+<span id="sec-tutorial"></span><h1><span class="section-number">3.1. </span>Basic usage<a class="headerlink" href="#basic-usage" title="Link to this heading">¶</a></h1>
+<p>The procedure to use the batch job script generator <code class="docutils literal notranslate"><span class="pre">moller</span></code> consists of the following steps:
+First, a job description file is prepared that defines the tasks to be executed. Next, the program <code class="docutils literal notranslate"><span class="pre">moller</span></code> is to be run with the job description file, and a batch job script is generated. The script is then transferred to the target supercomputer system. A batch job is submitted with the script to perform calculations.
+In this tutorial, we will explain the steps along a sample in <code class="docutils literal notranslate"><span class="pre">docs/tutorial/moller</span></code>.</p>
+<section id="prepare-job-description-file">
+<h2>Prepare job description file<a class="headerlink" href="#prepare-job-description-file" title="Link to this heading">¶</a></h2>
+<p>A job description file describes the content of calculations that are carried out in a batch job.
+Here, a <em>batch job</em> is used for a set of instructions submitted to job schedulers running on supercomputer systems.
+On the other hand, for the concurrent execution of programs that <code class="docutils literal notranslate"><span class="pre">moller</span></code> handles, we call a series of program executions performed for one set of parameters by a <em>job</em>. A job may consist of several contents that we call <em>tasks</em>. <code class="docutils literal notranslate"><span class="pre">moller</span></code> organizes job execution so that each task is run in parallel, and the synchronization between the jobs is taken at every start and end of the tasks.</p>
+<figure class="align-default" id="id3">
+<img alt="Tasks and jobs" src="../../_images/task_view.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 3.1 </span><span class="caption-text">An example of tasks and jobs: Three jobs #1 … #3 are carried out within a single batch job. Each job corresponds to different set of parameters. A job consists of 4 tasks. Each task is run in parallel among these three jobs.</span><a class="headerlink" href="#id3" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>An example of job description file is presented in the following. A job description file is in text-based YAML format. It contains parameters concerning the platform and the batch job, task descriptions, and pre/post-processes.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">name</span><span class="p">:</span> <span class="n">testjob</span>
+<span class="n">description</span><span class="p">:</span> <span class="n">Sample</span> <span class="n">task</span> <span class="n">file</span>
+
+<span class="n">platform</span><span class="p">:</span>
+  <span class="n">system</span><span class="p">:</span>  <span class="n">ohtaka</span>
+  <span class="n">queue</span><span class="p">:</span>   <span class="n">i8cpu</span>
+  <span class="n">node</span><span class="p">:</span>    <span class="mi">1</span>
+  <span class="n">elapsed</span><span class="p">:</span> <span class="mi">00</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">00</span>
+
+<span class="n">prologue</span><span class="p">:</span>
+  <span class="n">code</span><span class="p">:</span> <span class="o">|</span>
+    <span class="n">module</span> <span class="n">purge</span>
+    <span class="n">module</span> <span class="n">load</span> <span class="n">oneapi_compiler</span><span class="o">/</span><span class="mf">2023.0.0</span> <span class="n">openmpi</span><span class="o">/</span><span class="mf">4.1.5</span><span class="o">-</span><span class="n">oneapi</span><span class="o">-</span><span class="mf">2023.0.0</span><span class="o">-</span><span class="n">classic</span>
+
+    <span class="n">ulimit</span> <span class="o">-</span><span class="n">s</span> <span class="n">unlimited</span>
+
+    <span class="n">source</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">issp</span><span class="o">/</span><span class="n">materiapps</span><span class="o">/</span><span class="n">intel</span><span class="o">/</span><span class="n">parallel</span><span class="o">/</span><span class="n">parallelvars</span><span class="o">-</span><span class="mi">20210622</span><span class="o">-</span><span class="mf">1.</span><span class="n">sh</span>
+
+<span class="n">jobs</span><span class="p">:</span>
+  <span class="n">start</span><span class="p">:</span>
+    <span class="n">parallel</span><span class="p">:</span> <span class="n">false</span>
+    <span class="n">run</span><span class="p">:</span> <span class="o">|</span>
+      <span class="n">echo</span> <span class="s2">&quot;start...&quot;</span>
+
+  <span class="n">hello</span><span class="p">:</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">hello</span> <span class="n">world</span>
+    <span class="n">node</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">run</span><span class="p">:</span> <span class="o">|</span>
+      <span class="n">echo</span> <span class="s2">&quot;hello world.&quot;</span> <span class="o">&gt;</span> <span class="n">result</span><span class="o">.</span><span class="n">txt</span>
+      <span class="n">sleep</span> <span class="mi">2</span>
+
+  <span class="n">hello_again</span><span class="p">:</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">hello</span> <span class="n">world</span> <span class="n">again</span>
+    <span class="n">node</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">run</span><span class="p">:</span> <span class="o">|</span>
+      <span class="n">echo</span> <span class="s2">&quot;hello world again.&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">result</span><span class="o">.</span><span class="n">txt</span>
+      <span class="n">sleep</span> <span class="mi">2</span>
+
+<span class="n">epilogue</span><span class="p">:</span>
+  <span class="n">code</span><span class="p">:</span> <span class="o">|</span>
+    <span class="n">echo</span> <span class="s2">&quot;done.&quot;</span>
+    <span class="n">date</span>
+</pre></div>
+</div>
+<p>In the platform section, you can specify the type of platform on which to execute.
+In this case, settings for the System B (ohtaka) are being made.</p>
+<p>The prologue section describes the preprocessing of the batch job.
+It details the common command line to be executed before running the task.</p>
+<p>In the jobs section, the content of the task processing is described.
+The series of tasks to be executed in the job are described in a table format,
+with the task name as the key and the processing content as the value.</p>
+<p>In this example, a task that first outputs “start…” is defined with the task name “start”.
+Here, it is set to <code class="docutils literal notranslate"><span class="pre">parallel</span> <span class="pre">=</span> <span class="pre">false</span></code>.
+In this case, the content of <code class="docutils literal notranslate"><span class="pre">run</span></code> parameter is executed sequentially.</p>
+<p>Next, a task that outputs “hello world.” is defined with the task name “hello_world” .
+Here, since “parallel” is not set, it is treated as <code class="docutils literal notranslate"><span class="pre">parallel</span> <span class="pre">=</span> <span class="pre">true</span></code>.
+In this case, parallel processing is performed on a per-job basis.
+Similarly, next, a task that outputs “hello world again.” is defined with the task name “hello_again”.</p>
+<p>Finally, in the epilogue section, the post-processing of the batch job is described.
+It details the common command line to be executed after running the task.</p>
+<p>For more details on the specifications, please refer to the chapter <a class="reference internal" href="../filespec/index.html#sec-fileformat"><span class="std std-ref">File Format</span></a>.</p>
+</section>
+<section id="generate-batch-job-script">
+<h2>Generate batch job script<a class="headerlink" href="#generate-batch-job-script" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">moller</span></code> is to be run with the job description file (<code class="docutils literal notranslate"><span class="pre">input.yaml</span></code>) as an input as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>moller<span class="w"> </span>-o<span class="w"> </span>job.sh<span class="w"> </span>input.yaml
+</pre></div>
+</div>
+<p>A batch job script is generated and written to a file specified by the parameter in the job description file, or the command line option <code class="docutils literal notranslate"><span class="pre">-o</span></code> or <code class="docutils literal notranslate"><span class="pre">--output</span></code>. If both specified, the command line option is used. If neither specified, the result is written to the standard output.</p>
+<p>The obtained batch job script is to be transferred to the target system as required. It is noted that the batch job script is prepared for <code class="docutils literal notranslate"><span class="pre">bash</span></code>; users may need to set the shell for job execution to <code class="docutils literal notranslate"><span class="pre">bash</span></code>. (A care should be needed if the login shell is set to csh-type.)</p>
+</section>
+<section id="create-list-file">
+<h2>Create list file<a class="headerlink" href="#create-list-file" title="Link to this heading">¶</a></h2>
+<p>A list of jobs is to be created. <code class="docutils literal notranslate"><span class="pre">moller</span></code> is designed so that each job is executed within a directory prepared for the job with the job name. The job list can be created, for example, by the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>/usr/bin/ls<span class="w"> </span>-1d<span class="w"> </span>*<span class="w"> </span>&gt;<span class="w"> </span>list.dat
+</pre></div>
+</div>
+<p>In this tutorial, an utility script <code class="docutils literal notranslate"><span class="pre">make_inputs.sh</span></code> is enclosed which generates datasets and a list file.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>bash<span class="w"> </span>./make_inputs.sh
+</pre></div>
+</div>
+<p>By running the above command, a directory <code class="docutils literal notranslate"><span class="pre">output</span></code> and a set of subdirectories <code class="docutils literal notranslate"><span class="pre">dataset-0001</span></code> … <code class="docutils literal notranslate"><span class="pre">dataset-0020</span></code> that correspond to datasets, and a list file <code class="docutils literal notranslate"><span class="pre">list.dat</span></code> are created.</p>
+</section>
+<section id="run-batch-job">
+<h2>Run batch job<a class="headerlink" href="#run-batch-job" title="Link to this heading">¶</a></h2>
+<p>The batch job is to be submitted to the job scheduler with the batch job script.
+In this example, the job script and the input parameter files are copied into the <code class="docutils literal notranslate"><span class="pre">output</span></code> directory, and the current directory is changed to <a href="#id1"><span class="problematic" id="id2">``</span></a>output` as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>cp<span class="w"> </span>job.sh<span class="w"> </span>input.yaml<span class="w"> </span>output/
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>output
+</pre></div>
+</div>
+<p>In ohtaka, slurm is used for the job scheduling system. In order to submit a batch job, a command <code class="docutils literal notranslate"><span class="pre">sbatch</span></code> is invoked with the job script as an argument.
+Parameters can be passed to the script as additional arguments; the name of list file is specified as a parameter.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>sbatch<span class="w"> </span>job.sh<span class="w"> </span>list.dat
+</pre></div>
+</div>
+<p>Files named ‘result.txt’ will be generated in each directory listed on the list.dat.
+You can confirm that the ‘result.txt’ contains the strings ‘hello world.’ and ‘hello world again.’ as the job results.</p>
+</section>
+<section id="check-status">
+<h2>Check status<a class="headerlink" href="#check-status" title="Link to this heading">¶</a></h2>
+<p>The status of execution of the tasks are written to log files. A tool named <code class="docutils literal notranslate"><span class="pre">moller_status</span></code> is provided to generate a summary of the status of each job from the log files. It is invoked by the following command in the directory where the batch job is executed:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>moller_status<span class="w"> </span>input.yaml<span class="w"> </span>list.dat
+</pre></div>
+</div>
+<p>The command takes the job description file <code class="docutils literal notranslate"><span class="pre">input.yaml</span></code> and the list file <code class="docutils literal notranslate"><span class="pre">list.dat</span></code> as arguments. The list file may be omitted; in this case, the information of the jobs are extracted from the log files.</p>
+<p>An example of the output is shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="n">job</span>          <span class="o">|</span> <span class="n">hello</span>   <span class="o">|</span> <span class="n">hello_again</span>   <span class="o">|</span>
+<span class="o">|--------------|---------|---------------|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0001</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0002</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0003</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0004</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0005</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0006</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0007</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0008</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0009</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0010</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0011</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0012</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0013</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0014</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0015</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0016</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0017</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0018</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0019</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset</span><span class="o">-</span><span class="mi">0020</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>             <span class="o">|</span>
+</pre></div>
+</div>
+<p>where “o” corresponds to a task that has been completed successfully, “x” corresponds to a failed task, “-” corresponds to a skipped task because the previous task has been terminated with errors, and “.” corresponds to a task yet unexecuted.
+In the above example, the all tasks have been completed successfully.</p>
+</section>
+<section id="rerun-failed-tasks">
+<h2>Rerun failed tasks<a class="headerlink" href="#rerun-failed-tasks" title="Link to this heading">¶</a></h2>
+<p>If a task fails, the subsequent tasks within the job will not be executed.
+The following is an example of job status in which each task fails by 10% change.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="n">job</span>          <span class="o">|</span> <span class="n">task1</span>   <span class="o">|</span> <span class="n">task2</span>   <span class="o">|</span> <span class="n">task3</span>   <span class="o">|</span>
+<span class="o">|--------------|---------|---------|---------|</span>
+<span class="o">|</span> <span class="n">dataset_0001</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0002</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">x</span>       <span class="o">|</span> <span class="o">-</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0003</span> <span class="o">|</span> <span class="n">x</span>       <span class="o">|</span> <span class="o">-</span>       <span class="o">|</span> <span class="o">-</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0004</span> <span class="o">|</span> <span class="n">x</span>       <span class="o">|</span> <span class="o">-</span>       <span class="o">|</span> <span class="o">-</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0005</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0006</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0007</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">x</span>       <span class="o">|</span> <span class="o">-</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0008</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0009</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">x</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0010</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0011</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0012</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0013</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">x</span>       <span class="o">|</span> <span class="o">-</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0014</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0015</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0016</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0017</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0018</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0019</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0020</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+</pre></div>
+</div>
+<p>There, the jobs of dataset_0003 and dataset_0004 failed at task1, and the subsequent task2 and task3 were not executed. The other jobs were successful at task1, and proceeded to task2.
+In this way, each job is executed independently of other jobs.</p>
+<p>Users can rerun the failed tasks by submitting the batch job with the retry option.
+For SLURM job scheduler (e.g. used in ISSP system B), resubmit the job as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>sbatch<span class="w"> </span>job.sh<span class="w"> </span>--retry<span class="w"> </span>list.dat
+</pre></div>
+</div>
+<p>For PBS job scheduler (e.g. used in ISSP system C), edit the job script so that the line <code class="docutils literal notranslate"><span class="pre">retry=0</span></code> is replaced by <code class="docutils literal notranslate"><span class="pre">retry=1</span></code>, and resubmit the job.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="n">job</span>          <span class="o">|</span> <span class="n">task1</span>   <span class="o">|</span> <span class="n">task2</span>   <span class="o">|</span> <span class="n">task3</span>   <span class="o">|</span>
+<span class="o">|--------------|---------|---------|---------|</span>
+<span class="o">|</span> <span class="n">dataset_0001</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0002</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">x</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0003</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">x</span>       <span class="o">|</span> <span class="o">-</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0004</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0005</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0006</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0007</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0008</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0009</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0010</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0011</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0012</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0013</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0014</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0015</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0016</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0017</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0018</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0019</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dataset_0020</span> <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span> <span class="n">o</span>       <span class="o">|</span>
+</pre></div>
+</div>
+<p>The tasks that have failed will be executed in the second run.
+In the above example, the task1 for dataset_0003 was successful, but the task2 failed.
+For dataset_0004, task1, task2, and task3 were successfully executed.
+For the jobs of datasets whose tasks have already finished successfully, the second run will not do anything.</p>
+<p>N.B. the list file must not be modified on the rerun. The jobs are managed according to the order of entries in the list file, and therefore, if the order is changed, the jobs will not be executed properly.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Moller Users Guide</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Comprehensive Calculation Utility (moller)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../about/index.html">1. Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basic-usage.html">2. Installation and basic usage</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">3. Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../command/index.html">4. Command reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../filespec/index.html">5. File format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../appendix/index.html">6. Extension guide</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Comprehensive Calculation Utility (moller)</a><ul>
+  <li><a href="index.html"><span class="section-number">3. </span>Tutorial</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter"><span class="section-number">3. </span>Tutorial</a></li>
+      <li>Next: <a href="hphi.html" title="next chapter"><span class="section-number">3.2. </span>Example for <em>moller</em> calculation with HPhi</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2023-, The University of Tokyo.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="../../_sources/moller/tutorial/basic.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
