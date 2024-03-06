@@ -23,7 +23,7 @@ Contributors
 
 This software was developed by the following contributors.
 
--  ver.1.0.0 (Released on 2024/03/01)
+-  ver.1.0.0 (Released on 2024/03/06)
 
 -  ver.1.0-beta (Released on 2023/12/28)
 
