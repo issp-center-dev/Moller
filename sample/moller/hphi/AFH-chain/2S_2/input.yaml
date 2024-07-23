@@ -11,14 +11,9 @@ prologue:
   code: |
     echo "start"
     date
+
     module purge
     module load oneapi_compiler/2023.0.0 openmpi/4.1.5-oneapi-2023.0.0-classic
-
-    ulimit -s unlimited
-
-    source ~/env/conda.sh
-    conda activate htptools
-
     source /home/issp/materiapps/oneapi_compiler_classic-2023.0.0--openmpi-4.1.5/parallel/parallelvars-20210622-1.sh
     source /home/issp/materiapps/oneapi_compiler_classic-2023.0.0--openmpi-4.1.5/hphi/hphivars.sh
 
