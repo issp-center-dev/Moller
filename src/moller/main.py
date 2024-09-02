@@ -85,7 +85,7 @@ class TaskParallel:
         lines = self.code.splitlines()
         lines_new = []
         for line in lines:
-            if re.match(r'(srun|mpirun|mpiexec)', line):
+            if re.search(r'\b(srun|mpirun|mpiexec)\b', line):
                 line = re.sub(r'(srun|mpirun|mpiexec)', srun_str, line)
 
                 lines_new.append(r'  DEBUG "$_work_item: ' + line + '"')
