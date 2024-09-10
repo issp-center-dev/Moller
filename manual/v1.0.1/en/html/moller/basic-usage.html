@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>2. Installation and basic usage &#8212; Moller Users Guide 1.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=94bc0932" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+    <script src="../_static/documentation_options.js?v=292eb321"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3. Tutorial" href="tutorial/index.html" />
+    <link rel="prev" title="1. Introduction" href="about/index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="installation-and-basic-usage">
+<h1><span class="section-number">2. </span>Installation and basic usage<a class="headerlink" href="#installation-and-basic-usage" title="Link to this heading">¶</a></h1>
+<p><strong>Prerequisite</strong></p>
+<blockquote>
+<div><p>Comprehensive calculation utility <code class="docutils literal notranslate"><span class="pre">moller</span></code> included in HTP-tools requires the following programs and libraries:</p>
+<ul class="simple">
+<li><p>Python 3.x</p></li>
+<li><p>ruamel.yaml module</p></li>
+<li><p>tabulate module</p></li>
+<li><p>GNU Parallel (It must be installed on servers or compute nodes on which the job script is executed.)</p></li>
+</ul>
+</div></blockquote>
+<p><strong>Official pages</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://github.com/issp-center-dev/Moller">GitHub repository</a></p></li>
+</ul>
+</div></blockquote>
+<p><strong>Downloads</strong></p>
+<blockquote>
+<div><p>moller can be downloaded by the following command with git:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/issp-center-dev/Moller.git
+</pre></div>
+</div>
+</div></blockquote>
+<p><strong>Installation</strong></p>
+<blockquote>
+<div><p>Once the source files are obtained, you can install moller by running the following command. The required libraries will also be installed automatically at the same time.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>./Moller
+$<span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.
+</pre></div>
+</div>
+<p>The executable files <code class="docutils literal notranslate"><span class="pre">moller</span></code> and <code class="docutils literal notranslate"><span class="pre">moller_status</span></code> will be installed.</p>
+</div></blockquote>
+<p><strong>Directory structure</strong></p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span>
+<span class="o">|--</span> <span class="n">LICENSE</span>
+<span class="o">|--</span> <span class="n">README</span><span class="o">.</span><span class="n">md</span>
+<span class="o">|--</span> <span class="n">pyproject</span><span class="o">.</span><span class="n">toml</span>
+<span class="o">|--</span> <span class="n">docs</span><span class="o">/</span>
+<span class="o">|</span>   <span class="o">|--</span> <span class="n">ja</span><span class="o">/</span>
+<span class="o">|</span>   <span class="o">|--</span> <span class="n">en</span><span class="o">/</span>
+<span class="o">|</span>   <span class="o">|--</span> <span class="n">tutorial</span><span class="o">/</span>
+<span class="o">|--</span> <span class="n">src</span><span class="o">/</span>
+<span class="o">|</span>   <span class="o">|--</span> <span class="n">moller</span><span class="o">/</span>
+<span class="o">|</span>       <span class="o">|--</span> <span class="fm">__init__</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|--</span> <span class="n">main</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|--</span> <span class="n">platform</span><span class="o">/</span>
+<span class="o">|</span>       <span class="o">|</span>   <span class="o">|--</span> <span class="fm">__init__</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|</span>   <span class="o">|--</span> <span class="n">base</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|</span>   <span class="o">|--</span> <span class="n">base_slurm</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|</span>   <span class="o">|--</span> <span class="n">base_pbs</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|</span>   <span class="o">|--</span> <span class="n">base_default</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|</span>   <span class="o">|--</span> <span class="n">ohtaka</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|</span>   <span class="o">|--</span> <span class="n">kugui</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|</span>   <span class="o">|--</span> <span class="n">pbs</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|</span>   <span class="o">|--</span> <span class="n">default</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|</span>   <span class="o">|--</span> <span class="n">function</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|</span>   <span class="o">|--</span> <span class="n">utils</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>       <span class="o">|--</span> <span class="n">moller_status</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|--</span> <span class="n">sample</span><span class="o">/</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p><strong>Basic usage</strong></p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">moller</span></code> is a tool to generate batch job scripts for supercomputers in which programs are run in parallel for a set of execution conditions using concurrent execution features.</p>
+<ol class="arabic">
+<li><p>Prepare job description file</p>
+<blockquote>
+<div><p>First, you need to create a job description file in YAML format that describes the tasks to be executed on supercomputers. The details of the format will be given in File Format section of the manual.</p>
+</div></blockquote>
+</li>
+<li><p>Run command</p>
+<blockquote>
+<div><p>Run moller program with the job description file, and a batch job script will be generated.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>moller<span class="w"> </span>-o<span class="w"> </span>job.sh<span class="w"> </span>input.yaml
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Run batch jobs</p>
+<blockquote>
+<div><p>Transfer the generated batch job scripts to the supercomputer.
+Prepare a directory for each parameter set, and create a list of the directory names in a file <code class="docutils literal notranslate"><span class="pre">list.dat</span></code>.
+Note that the list contains the relative paths to the directory where the batch job is executed, or the absolute paths.</p>
+<p>Once the list file is ready, you may submit a batch job. The actual command depends on the system.</p>
+<ul>
+<li><p>In case of ISSP system B (ohtaka)</p>
+<p>In ohtaka, slurm is used for the job scheduling system. In order to submit a batch job, a command <code class="docutils literal notranslate"><span class="pre">sbatch</span></code> is invoked with the job script as an argument. Parameters can be passed to the script as additional arguments; the name of list file is specified as a parameter.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>sbatch<span class="w"> </span>job.sh<span class="w"> </span>list.dat
+</pre></div>
+</div>
+<p>If the list file is not specified, <code class="docutils literal notranslate"><span class="pre">list.dat</span></code> is used by default.</p>
+</li>
+<li><p>In case of ISSP system C (kugui)</p>
+<p>In kugui, PBS is used for the job scheduling system. In order to submit a batch job, a command <code class="docutils literal notranslate"><span class="pre">qsub</span></code> is invoked with the job script. There is no way to pass parameters to the script, and thus the name of the list file is fixed to <code class="docutils literal notranslate"><span class="pre">list.dat</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>qsub<span class="w"> </span>job.sh
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Check the status of the calculation</p>
+<blockquote>
+<div><p>After the job finishes, you may run the following command</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>moller_status<span class="w"> </span>input.yaml<span class="w"> </span>list.dat
+</pre></div>
+</div>
+<p>to obtain a report whether the calculation for each parameter set has been completed successfully.</p>
+</div></blockquote>
+</li>
+<li><p>Retry/resume job</p>
+<blockquote>
+<div><p>In case the job is terminated during the execution, the job may be resumed by submitting the batch job again with the same list file.
+The yet unexecuted jobs (as well as the unfinished jobs) will be run.</p>
+<ul class="simple">
+<li><p>In case of ISSP system B (ohtaka)</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>sbatch<span class="w"> </span>job.sh<span class="w"> </span>list.dat
+</pre></div>
+</div>
+<p>To retry the failed tasks, the batch job is submitted with <code class="docutils literal notranslate"><span class="pre">--retry</span></code> command line option.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>sbatch<span class="w"> </span>job.sh<span class="w"> </span>--retry<span class="w"> </span>list.dat
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>In case of ISSP system C (kugui)</p></li>
+</ul>
+<p>For kugui, to retry the failed tasks, the batch job script should be edited so that <code class="docutils literal notranslate"><span class="pre">retry=0</span></code> is changed to be <code class="docutils literal notranslate"><span class="pre">retry=1</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>qsub<span class="w"> </span>job.sh
+</pre></div>
+</div>
+<p>Then, the batch job is submitted as above.</p>
+</div></blockquote>
+</li>
+</ol>
+</div></blockquote>
+<p><strong>References</strong></p>
+<p>[1] <a class="reference external" href="https://www.usenix.org/publications/login/february-2011-volume-36-number-1/gnu-parallel-command-line-power-tool">O. Tange, GNU Parallel - The command-Line Power Tool, ;login: The USENIX Magazine, February 2011:42-47.</a></p>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Moller Users Guide</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Comprehensive Calculation Utility (moller)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="about/index.html">1. Introduction</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2. Installation and basic usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html">3. Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command/index.html">4. Command reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filespec/index.html">5. File format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendix/index.html">6. Extension guide</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Comprehensive Calculation Utility (moller)</a><ul>
+      <li>Previous: <a href="about/index.html" title="previous chapter"><span class="section-number">1. </span>Introduction</a></li>
+      <li>Next: <a href="tutorial/index.html" title="next chapter"><span class="section-number">3. </span>Tutorial</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2023-, The University of Tokyo.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="../_sources/moller/basic-usage.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

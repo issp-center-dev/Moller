@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>5. File format &#8212; Moller Users Guide 1.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=94bc0932" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
+    <script src="../../_static/documentation_options.js?v=292eb321"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="6. Extension guide" href="../appendix/index.html" />
+    <link rel="prev" title="4. Command reference" href="../command/index.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="file-format">
+<span id="sec-fileformat"></span><h1><span class="section-number">5. </span>File format<a class="headerlink" href="#file-format" title="Link to this heading">¶</a></h1>
+<section id="job-description-file">
+<h2><span class="section-number">5.1. </span>Job description file<a class="headerlink" href="#job-description-file" title="Link to this heading">¶</a></h2>
+<p>A job description file contains configurations to generate a batch job script by <code class="docutils literal notranslate"><span class="pre">moller</span></code>. It is prepared in text-based YAML format. This file consists of the following parts:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>General settings: specifies job names and output files.</p></li>
+<li><p>platform section: specifies the system on which batch jobs are executed, and the settings for the batch jobs.</p></li>
+<li><p>prologue and epilogue sections: specifies initial settings and finalization within the batch job.</p></li>
+<li><p>jobs section: specifies tasks to be carried out in the betch job script.</p></li>
+</ol>
+</div></blockquote>
+<section id="general-settings">
+<h3>General settings<a class="headerlink" href="#general-settings" title="Link to this heading">¶</a></h3>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">name</span></code></p>
+<blockquote>
+<div><p>specifies the name of the batch job. If it is not given, the job name is left unspecified. (Usually the name of the job script is used as the job name.)</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">description</span></code></p>
+<blockquote>
+<div><p>provides the description of the batch job. It is regarded as comments.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">output_file</span></code></p>
+<blockquote>
+<div><p>specifies the output file name. When the output file is given by a command-line option, the command-line parameter is used. When none of them is specified, the result is written to the standard output.</p>
+</div></blockquote>
+</div></blockquote>
+</section>
+<section id="platform">
+<h3>platform<a class="headerlink" href="#platform" title="Link to this heading">¶</a></h3>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">system</span></code></p>
+<blockquote>
+<div><p>specifies the target system. At present, either <code class="docutils literal notranslate"><span class="pre">ohtaka</span></code> or <code class="docutils literal notranslate"><span class="pre">kugui</span></code> is accepted.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">queue</span></code></p>
+<blockquote>
+<div><p>specifies the name of batch queue. The actual value depends on the target system.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">node</span></code></p>
+<blockquote>
+<div><p>specifies the number of nodes to be used. It is given by an integer specifying the number of nodes, or a list of integers specifying <code class="docutils literal notranslate"><span class="pre">[</span></code> number of nodes, number of cores per node <code class="docutils literal notranslate"><span class="pre">]</span></code>. The accepted range of parameters depends on the system and queue settings. (The number of cores is accepted for kugui and default systems; otherwise it is ignored.)</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">core</span></code></p>
+<blockquote>
+<div><p>specifies the number of cores per node be used. The accepted range of parameters depends on the system and queue settings. If both the second parameter of <code class="docutils literal notranslate"><span class="pre">node</span></code> and <code class="docutils literal notranslate"><span class="pre">core</span></code> are specified, the value in <code class="docutils literal notranslate"><span class="pre">core</span></code> is used. (This parameter is accepted for kugui and default target systems.)</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">elapsed</span></code></p>
+<blockquote>
+<div><p>specifies the elapsed time of the batch job in HH:MM:SS format.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">options</span></code></p>
+<blockquote>
+<div><p>specifies other batch job options. It is given as a list of options or as a multiple-line string with options in each line. The heading directives (e.g. <code class="docutils literal notranslate"><span class="pre">#PBS</span></code> or <code class="docutils literal notranslate"><span class="pre">#SBATCH</span></code>) are not included. The examples are given as follows.</p>
+<ul>
+<li><p>an example of SLURM job script in the string format:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">options</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">  </span><span class="no">--mail-type=BEGIN,END,FAIL</span>
+<span class="w">  </span><span class="no">--mail-user=user@sample.com</span>
+<span class="w">  </span><span class="no">--requeue</span>
+</pre></div>
+</div>
+</li>
+<li><p>an example of PBS job script in the list format:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">options</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-m bea</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-M user@sample.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-r y</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+</section>
+<section id="prologue-epilogue">
+<h3>prologue, epilogue<a class="headerlink" href="#prologue-epilogue" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">prologue</span></code> section specifies the commands to be run prior to executing the tasks. It is used, for example, to set environment variables of libraries and paths.
+<code class="docutils literal notranslate"><span class="pre">epilogue</span></code> section specifies the commands to be run after all tasks have been completed.</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">code</span></code></p>
+<blockquote>
+<div><p>specifies the content of the commands in the form of shell script. It is embedded in the batch job script, and executed within the batch job.</p>
+</div></blockquote>
+</div></blockquote>
+</section>
+<section id="jobs">
+<h3>jobs<a class="headerlink" href="#jobs" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">jobs</span></code> section specifies a sequence of tasks in a table format, with the task names as keys and the contents as values.</p>
+<blockquote>
+<div><p>key</p>
+<blockquote>
+<div><p>name of task</p>
+</div></blockquote>
+<p>value</p>
+<blockquote>
+<div><p>a table that consists of the following items:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">description</span></code></p>
+<blockquote>
+<div><p>provides the description of the task. It is regarded as comments.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">node</span></code></p>
+<blockquote>
+<div><p>specifies the degree of parallelism in one of the following formats.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">[</span></code> number of processes, number of threads per process <code class="docutils literal notranslate"><span class="pre">]</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[</span></code> number of nodes, number of processes, number of threads per process <code class="docutils literal notranslate"><span class="pre">]</span></code></p></li>
+<li><p>number of nodes</p></li>
+</ul>
+<p>When the number of nodes is specified, the specified number of nodes are exclusively assigned to a job. Otherwise, if the required number of cores for a job is smaller than the number of cores in a node, more than one job may be allocated in a single node. If a job uses more than one node, the required number of nodes are exclusively assigned.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">parallel</span></code></p>
+<blockquote>
+<div><p>This parameter is set to <code class="docutils literal notranslate"><span class="pre">true</span></code> if the tasks of different jobs are executed in parallel. It is set to <code class="docutils literal notranslate"><span class="pre">false</span></code> if they are executed sequentially. The default value is <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">run</span></code></p>
+<blockquote>
+<div><p>The content of the task is described in the form of shell script. The executions of MPI parallel programs or MPI/OpenMPI hybrid parallel programs are specified by</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>srun<span class="w"> </span>prog<span class="w"> </span><span class="o">[</span>arg1,<span class="w"> </span>...<span class="o">]</span>
+</pre></div>
+</div>
+<p>where, in addition to the keyword <code class="docutils literal notranslate"><span class="pre">srun</span></code>, <code class="docutils literal notranslate"><span class="pre">mpirun</span></code> or <code class="docutils literal notranslate"><span class="pre">mpiexec</span></code> is accepted. In the resulting job script, they are replaced by the command (e.g. <code class="docutils literal notranslate"><span class="pre">srun</span></code> or <code class="docutils literal notranslate"><span class="pre">mpirun</span></code>) and the degree of parallelism specified by <code class="docutils literal notranslate"><span class="pre">node</span></code> parameter.</p>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</section>
+</section>
+<section id="list-file">
+<h2><span class="section-number">5.2. </span>List file<a class="headerlink" href="#list-file" title="Link to this heading">¶</a></h2>
+<p>This file contains a list of jobs. It is a text file with a job name in a line (The name of the directory is associated with the name of the job).</p>
+<p><code class="docutils literal notranslate"><span class="pre">moller</span></code> assumes that a directory is assigned to each job, and the tasks of the job are executed within the directory. These directories are supposed to be located in the directory where the batch job is submitted.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Moller Users Guide</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Comprehensive Calculation Utility (moller)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../about/index.html">1. Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basic-usage.html">2. Installation and basic usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial/index.html">3. Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../command/index.html">4. Command reference</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5. File format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../appendix/index.html">6. Extension guide</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Comprehensive Calculation Utility (moller)</a><ul>
+      <li>Previous: <a href="../command/index.html" title="previous chapter"><span class="section-number">4. </span>Command reference</a></li>
+      <li>Next: <a href="../appendix/index.html" title="next chapter"><span class="section-number">6. </span>Extension guide</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2023-, The University of Tokyo.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="../../_sources/moller/filespec/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
