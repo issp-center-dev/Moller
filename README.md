@@ -19,20 +19,23 @@ It is a tool for generating batch job scripts for supercomputers and clusters, a
 
 ## Supported platforms
 
-- ISSP supercomputer systems: ohtaka, kugui
-- general cluster machines and workstations
+moller generates batch job scripts for the following types of platforms:
 
-moller is pre-installed and available on the following supercomputer systems:
+- ISSP supercomputer systems: ohtaka (slurm), kugui (PBS)
+- generic PBS-based clusters
+- general cluster machines and workstations without a job scheduler
 
-- [ISSP supercomputers](https://mdcl.issp.u-tokyo.ac.jp/scc/en/) (The University of Tokyo): kugui, ohtaka
-- Tohoku University supercomputer: [AOBA](https://www.cc.tohoku.ac.jp/english/)
-- Kyushu University supercomputer: [Genkai](https://www.cc.kyushu-u.ac.jp/scp/en/system/genkai/)
+### Pre-installed systems
 
-The following system is already supported by moller, while pre-installation is in progress (as of August 14, 2026):
+moller is available on the following supercomputer systems.
+For instructions on using moller on each system, please refer to its user guide.
 
-- Information Technology Center, The University of Tokyo: [Miyabi](https://www.cc.u-tokyo.ac.jp/en/supercomputer/miyabi/service/)
-
-For instructions on using moller on these systems, please refer to the user guide of each system.
+| System | Operated by | Status |
+| --- | --- | --- |
+| ohtaka, kugui | [Supercomputer Center, ISSP](https://mdcl.issp.u-tokyo.ac.jp/scc/en/), The University of Tokyo | pre-installed |
+| [AOBA](https://www.cc.tohoku.ac.jp/english/) | Cyberscience Center, Tohoku University | pre-installed |
+| [Genkai](https://www.cc.kyushu-u.ac.jp/scp/en/system/genkai/) | Research Institute for Information Technology, Kyushu University | pre-installed |
+| [Miyabi](https://www.cc.u-tokyo.ac.jp/en/supercomputer/miyabi/service/) | Information Technology Center, The University of Tokyo | supported; pre-installation in progress (as of Aug 14, 2026) |
 
 ## Requirement
 
