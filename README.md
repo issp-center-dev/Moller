@@ -1,5 +1,11 @@
 # moller
 
+[![Release](https://img.shields.io/github/v/release/issp-center-dev/Moller)](https://github.com/issp-center-dev/Moller/releases)
+[![License: GPL-3.0-or-later](https://img.shields.io/badge/License-GPL--3.0--or--later-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
+[![Docs](https://github.com/issp-center-dev/Moller/actions/workflows/deploy_docs.yml/badge.svg)](https://github.com/issp-center-dev/Moller/actions/workflows/deploy_docs.yml)
+[![Python](https://img.shields.io/badge/Python-3.7%2B-blue.svg)](https://www.python.org/)
+[![DOI](https://img.shields.io/badge/DOI-10.1080%2F27660400.2025.2564055-blue)](https://doi.org/10.1080/27660400.2025.2564055)
+
 In recent years, the use of machine learning for predicting material properties and designing substances (known as materials informatics) has gained considerable attention.
 The accuracy of machine learning depends heavily on the preparation of appropriate training data.
 Therefore, the development of tools and environments for the rapid generation of training data is expected to contribute significantly to the advancement of research in materials informatics.
