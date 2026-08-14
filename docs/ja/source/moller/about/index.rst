@@ -104,15 +104,26 @@ BibTeX形式:
 
 - Ubuntu Linux + python3
 
-また、以下のスーパーコンピュータでは moller がプリインストールされており、そのまま利用できます。
+また、以下のスーパーコンピュータで moller を利用できます。
+各システム上での具体的な利用方法については、各システムの利用手引き等をご確認ください。
 
-- `物性研スパコン <https://mdcl.issp.u-tokyo.ac.jp/scc/>`_ (東京大学 物性研究所): kugui, ohtaka
-- 東北大スパコン (東北大学): `AOBA <https://www.ss.cc.tohoku.ac.jp/>`_
-- 九州大スパコン (九州大学): `玄界 <https://www.cc.kyushu-u.ac.jp/scp/system/genkai/>`_
+.. list-table::
+   :header-rows: 1
+   :widths: 20 50 30
 
-以下のスーパーコンピュータは対応済みですが、プリインストールは対応中です (2026/8/14現在)。
-
-- 東大情報基盤センター (東京大学): `Miyabi <https://www.cc.u-tokyo.ac.jp/supercomputer/miyabi/service/>`_
-
-これらのシステム上での具体的な利用方法については、各システムの利用手引き等をご確認ください。
+   * - システム
+     - 運用機関
+     - 状況
+   * - ohtaka, kugui
+     - `物性研究所スーパーコンピュータセンター <https://mdcl.issp.u-tokyo.ac.jp/scc/>`_ (東京大学)
+     - プリインストール済み
+   * - `AOBA <https://www.ss.cc.tohoku.ac.jp/>`_
+     - 東北大学 サイバーサイエンスセンター
+     - プリインストール済み
+   * - `玄界 <https://www.cc.kyushu-u.ac.jp/scp/system/genkai/>`_
+     - 九州大学 情報基盤研究開発センター
+     - プリインストール済み
+   * - `Miyabi <https://www.cc.u-tokyo.ac.jp/supercomputer/miyabi/service/>`_
+     - 東京大学 情報基盤センター
+     - 対応済み (プリインストールは対応中, 2026/8/14現在)
 
