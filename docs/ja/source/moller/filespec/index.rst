@@ -35,7 +35,7 @@ platform
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   ``system``
 
-    対象となるシステムを指定します。現状では ohtaka と kugui が指定できます。
+    対象となるシステムを指定します。現状では ``ohtaka``, ``kugui``, ``pbs`` (汎用のPBS系クラスタ), ``default`` (ジョブスケジューラを使用しない環境) が指定できます。
 
   ``queue``
 
@@ -62,18 +62,18 @@ platform
       .. code-block:: yaml
 
           options: |
-	    --mail-type=BEGIN,END,FAIL
-	    --mail-user=user@sample.com
-	    --requeue
+            --mail-type=BEGIN,END,FAIL
+            --mail-user=user@sample.com
+            --requeue
 
     - PBSの場合 (リストで指定する例)
 
       .. code-block:: yaml
 
           options:
-	    - -m bea
-	    - -M user@sample.com
-	    - -r y
+            - -m bea
+            - -M user@sample.com
+            - -r y
 
 
 prologue, epilogue
@@ -103,7 +103,7 @@ jobs
       ``node``
 
         並列度を指定します。指定方法は以下のいずれかです。
-      
+
         - [ プロセス数, プロセスあたりのスレッド数 ]
         - [ ノード数, プロセス数, プロセスあたりのスレッド数 ]
         - ノード数
@@ -119,9 +119,9 @@ jobs
         タスクの処理内容をシェルスクリプトの記法で記述します。MPIプログラムまたは MPI/OpenMP ハイブリッドプログラムを実行する箇所は
 
         .. code-block:: bash
-      
+
             srun prog [arg1, ...]
-	  
+
         と記述します。 ``srun`` の他に ``mpirun``, ``mpiexec`` のキーワードが有効です。このキーワードは、実際のバッチジョブスクリプト中では、並列実行のためのコマンド (``srun`` や ``mpirun``) と ``node`` パラメータで指定した並列度の設定に置き換えて記述されます。
 
 リストファイル

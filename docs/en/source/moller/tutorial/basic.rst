@@ -93,7 +93,7 @@ Run batch job
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The batch job is to be submitted to the job scheduler with the batch job script.
-In this example, the job script and the input parameter files are copied into the ``output`` directory, and the current directory is changed to ``output` as follows:
+In this example, the job script and the input parameter files are copied into the ``output`` directory, and the current directory is changed to ``output`` as follows:
 
 .. code-block:: bash
 

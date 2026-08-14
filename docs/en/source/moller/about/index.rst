@@ -11,12 +11,12 @@ Therefore, the development of tools and environments for the rapid generation of
 
 moller is provided as part of the HTP-Tools package, designed to support high-throughput computations.
 It is a tool for generating batch job scripts for supercomputers and clusters, allowing parallel execution of programs under a series of computational conditions, such as parameter parallelism.
-Currently, it supports the supercomputers ohtaka (using the slurm job scheduler) and kugui (using the PBS job scheduler) provided by the Institute for Solid State Physics, University of Tokyo.
+Currently, it supports the supercomputers ohtaka (using the slurm job scheduler) and kugui (using the PBS job scheduler) provided by the Institute for Solid State Physics, University of Tokyo, as well as generic PBS-based clusters and workstations without a job scheduler.
 
 License
 ----------------------------------------------------------------
 
-The distribution of the program package and the source codes for moller follow GNU General Public License version 3 (GPL v3) or later.
+The distribution of the program package and the source codes for moller follow GNU General Public License version 3 or later (GPL-3.0-or-later).
 
 Contributors
 ----------------------------------------------------------------
@@ -31,15 +31,15 @@ This software was developed by the following contributors.
 
    -  Developers
 
-      -  Kazuyoshi Yoshimi (The Instutite for Solid State Physics, The University of Tokyo)
+      -  Kazuyoshi Yoshimi (The Institute for Solid State Physics, The University of Tokyo)
 
-      -  Tatsumi Aoyama (The Instutite for Solid State Physics, The University of Tokyo)
+      -  Tatsumi Aoyama (The Institute for Solid State Physics, The University of Tokyo)
 
-      -  Yuichi Motoyama (The Instutite for Solid State Physics, The University of Tokyo)
+      -  Yuichi Motoyama (The Institute for Solid State Physics, The University of Tokyo)
 
-      -  Masahiro Fukuda (The Instutite for Solid State Physics, The University of Tokyo)
+      -  Masahiro Fukuda (The Institute for Solid State Physics, The University of Tokyo)
 
-      -  Kota Ido (The Instutite for Solid State Physics, The University of Tokyo)
+      -  Kota Ido (The Institute for Solid State Physics, The University of Tokyo)
 
       -  Tetsuya Fukushima (The National Institute of Advanced Industrial Science and Technology (AIST))
 
@@ -47,9 +47,9 @@ This software was developed by the following contributors.
 
       -  Takashi Koretsune (Tohoku University)
 
-   -  Project Corrdinator
+   -  Project Coordinator
 
-      -  Taisuke Ozaki (The Instutite for Solid State Physics, The University of Tokyo)
+      -  Taisuke Ozaki (The Institute for Solid State Physics, The University of Tokyo)
 
 
 Copyright
@@ -67,10 +67,61 @@ Copyright
 
 This software was developed with the support of "Project for advancement of software usability in materials science" of The Institute for Solid State Physics, The University of Tokyo.
 
+The installation of moller on Miyabi and Genkai was supported by JST Moonshot R&D Program (Grant Number JPMJMS24A3).
+
+Citation
+----------------------------------------------------------------
+
+When publishing results obtained using this software, we would appreciate it if you cite the following paper:
+
+  Kazuyoshi Yoshimi, Yuichi Motoyama, Tatsumi Aoyama, Mitsuaki Kawamura, and Naoki Kawashima,
+  "Project for advancement of software usability in materials science",
+  Science and Technology of Advanced Materials: Methods **5**, 2564055 (2025).
+  `https://doi.org/10.1080/27660400.2025.2564055 <https://doi.org/10.1080/27660400.2025.2564055>`_
+
+BibTeX entry:
+
+.. code-block:: bibtex
+
+  @article{Yoshimi2025,
+    author  = {Kazuyoshi Yoshimi and Yuichi Motoyama and Tatsumi Aoyama and Mitsuaki Kawamura and Naoki Kawashima},
+    title   = {Project for advancement of software usability in materials science},
+    journal = {Science and Technology of Advanced Materials: Methods},
+    volume  = {5},
+    number  = {1},
+    pages   = {2564055},
+    year    = {2025},
+    doi     = {10.1080/27660400.2025.2564055},
+    url     = {https://doi.org/10.1080/27660400.2025.2564055}
+  }
+
 Operating environment
 ----------------------------------------------------------------
 
 moller was tested on the following platforms:
 
 - Ubuntu Linux + python3
+
+moller is available on the following supercomputer systems.
+For instructions on using moller on each system, please refer to its user guide.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 50 30
+
+   * - System
+     - Operated by
+     - Status
+   * - ohtaka, kugui
+     - `Supercomputer Center, ISSP <https://mdcl.issp.u-tokyo.ac.jp/scc/en/>`_, The University of Tokyo
+     - pre-installed
+   * - `AOBA <https://www.cc.tohoku.ac.jp/english/>`_
+     - Cyberscience Center, Tohoku University
+     - pre-installed
+   * - `Genkai <https://www.cc.kyushu-u.ac.jp/scp/en/system/genkai/>`_
+     - Research Institute for Information Technology, Kyushu University
+     - pre-installed
+   * - `Miyabi <https://www.cc.u-tokyo.ac.jp/en/supercomputer/miyabi/service/>`_
+     - Information Technology Center, The University of Tokyo
+     - supported; pre-installation in progress (as of Aug 14, 2026)
 

@@ -1,4 +1,14 @@
+<div align="center">
+<img src="docs/images/moller_logo.png" alt="moller logo" width="200">
+</div>
+
 # moller
+
+[![Release](https://img.shields.io/github/v/release/issp-center-dev/Moller)](https://github.com/issp-center-dev/Moller/releases)
+[![License: GPL-3.0-or-later](https://img.shields.io/badge/License-GPL--3.0--or--later-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
+[![Docs](https://github.com/issp-center-dev/Moller/actions/workflows/deploy_docs.yml/badge.svg)](https://github.com/issp-center-dev/Moller/actions/workflows/deploy_docs.yml)
+[![Python](https://img.shields.io/badge/Python-3.7%2B-blue.svg)](https://www.python.org/)
+[![DOI](https://img.shields.io/badge/DOI-10.1080%2F27660400.2025.2564055-blue)](https://doi.org/10.1080/27660400.2025.2564055)
 
 In recent years, the use of machine learning for predicting material properties and designing substances (known as materials informatics) has gained considerable attention.
 The accuracy of machine learning depends heavily on the preparation of appropriate training data.
@@ -9,8 +19,23 @@ It is a tool for generating batch job scripts for supercomputers and clusters, a
 
 ## Supported platforms
 
-- ISSP supercomputer systems: ohtaka, kugui
-- general cluster machines and workstations
+moller generates batch job scripts for the following types of platforms:
+
+- ISSP supercomputer systems: ohtaka (slurm), kugui (PBS)
+- generic PBS-based clusters
+- general cluster machines and workstations without a job scheduler
+
+### Pre-installed systems
+
+moller is available on the following supercomputer systems.
+For instructions on using moller on each system, please refer to its user guide.
+
+| System | Operated by | Status |
+| --- | --- | --- |
+| ohtaka, kugui | [Supercomputer Center, ISSP](https://mdcl.issp.u-tokyo.ac.jp/scc/en/), The University of Tokyo | pre-installed |
+| [AOBA](https://www.cc.tohoku.ac.jp/english/) | Cyberscience Center, Tohoku University | pre-installed |
+| [Genkai](https://www.cc.kyushu-u.ac.jp/scp/en/system/genkai/) | Research Institute for Information Technology, Kyushu University | pre-installed |
+| [Miyabi](https://www.cc.u-tokyo.ac.jp/en/supercomputer/miyabi/service/) | Information Technology Center, The University of Tokyo | supported; pre-installation in progress (as of Aug 14, 2026) |
 
 ## Requirement
 
@@ -27,14 +52,42 @@ python3 -m pip install DIRECTORY_OF_THE_REPOSITORY
 ## License
 
 The distribution of the program package and the source codes for moller follow
-GNU General Public License version 3
-([GPL v3](https://www.gnu.org/licenses/gpl-3.0.en.html)).
+GNU General Public License version 3 or later
+([GPL-3.0-or-later](https://www.gnu.org/licenses/gpl-3.0.en.html)).
 
 Copyright (c) <2023-> The University of Tokyo. All rights reserved.
 
 This software was developed with the support of
 "Project for Advancement of Software Usability in Materials Science"
 of The Institute for Solid State Physics, The University of Tokyo.
+
+The installation of moller on Miyabi and Genkai was supported by
+JST Moonshot R&D Program (Grant Number JPMJMS24A3).
+
+## Citation
+
+When publishing results obtained using this software, we would appreciate it if you cite the following paper:
+
+> Kazuyoshi Yoshimi, Yuichi Motoyama, Tatsumi Aoyama, Mitsuaki Kawamura, and Naoki Kawashima,
+> "Project for advancement of software usability in materials science",
+> Science and Technology of Advanced Materials: Methods **5**, 2564055 (2025).
+> [https://doi.org/10.1080/27660400.2025.2564055](https://doi.org/10.1080/27660400.2025.2564055)
+
+BibTeX entry:
+
+``` bibtex
+@article{Yoshimi2025,
+  author  = {Kazuyoshi Yoshimi and Yuichi Motoyama and Tatsumi Aoyama and Mitsuaki Kawamura and Naoki Kawashima},
+  title   = {Project for advancement of software usability in materials science},
+  journal = {Science and Technology of Advanced Materials: Methods},
+  volume  = {5},
+  number  = {1},
+  pages   = {2564055},
+  year    = {2025},
+  doi     = {10.1080/27660400.2025.2564055},
+  url     = {https://doi.org/10.1080/27660400.2025.2564055}
+}
+```
 
 ## Official page
 

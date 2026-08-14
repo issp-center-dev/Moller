@@ -14,7 +14,7 @@ A job description file contains configurations to generate a batch job script by
 
   3. prologue and epilogue sections: specifies initial settings and finalization within the batch job.
 
-  4. jobs section: specifies tasks to be carried out in the betch job script.
+  4. jobs section: specifies tasks to be carried out in the batch job script.
 
 General settings
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -36,7 +36,7 @@ platform
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   ``system``
 
-    specifies the target system. At present, either ``ohtaka`` or ``kugui`` is accepted.
+    specifies the target system. At present, ``ohtaka``, ``kugui``, ``pbs`` (generic PBS-based clusters), and ``default`` (environments without a job scheduler) are accepted.
 
   ``queue``
 
@@ -63,18 +63,18 @@ platform
       .. code-block:: yaml
 
           options: |
-	    --mail-type=BEGIN,END,FAIL
-	    --mail-user=user@sample.com
-	    --requeue
+            --mail-type=BEGIN,END,FAIL
+            --mail-user=user@sample.com
+            --requeue
 
     - an example of PBS job script in the list format:
 
       .. code-block:: yaml
 
           options:
-	    - -m bea
-	    - -M user@sample.com
-	    - -r y
+            - -m bea
+            - -M user@sample.com
+            - -r y
 
 prologue, epilogue
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -100,31 +100,31 @@ jobs
 
       ``description``
 
-	provides the description of the task. It is regarded as comments.
+        provides the description of the task. It is regarded as comments.
 
       ``node``
 
-	specifies the degree of parallelism in one of the following formats.
-      
+        specifies the degree of parallelism in one of the following formats.
+
         - ``[`` number of processes, number of threads per process ``]``
         - ``[`` number of nodes, number of processes, number of threads per process ``]``
         - number of nodes
 
-	When the number of nodes is specified, the specified number of nodes are exclusively assigned to a job. Otherwise, if the required number of cores for a job is smaller than the number of cores in a node, more than one job may be allocated in a single node. If a job uses more than one node, the required number of nodes are exclusively assigned.
+        When the number of nodes is specified, the specified number of nodes are exclusively assigned to a job. Otherwise, if the required number of cores for a job is smaller than the number of cores in a node, more than one job may be allocated in a single node. If a job uses more than one node, the required number of nodes are exclusively assigned.
 
       ``parallel``
 
-	This parameter is set to ``true`` if the tasks of different jobs are executed in parallel. It is set to ``false`` if they are executed sequentially. The default value is ``true``.
+        This parameter is set to ``true`` if the tasks of different jobs are executed in parallel. It is set to ``false`` if they are executed sequentially. The default value is ``true``.
 
       ``run``
 
-	The content of the task is described in the form of shell script. The executions of MPI parallel programs or MPI/OpenMPI hybrid parallel programs are specified by
+        The content of the task is described in the form of shell script. The executions of MPI parallel programs or MPI/OpenMPI hybrid parallel programs are specified by
 
         .. code-block:: bash
-      
+
             srun prog [arg1, ...]
-	  
-	where, in addition to the keyword ``srun``, ``mpirun`` or ``mpiexec`` is accepted. In the resulting job script, they are replaced by the command (e.g. ``srun`` or ``mpirun``) and the degree of parallelism specified by ``node`` parameter.
+
+        where, in addition to the keyword ``srun``, ``mpirun`` or ``mpiexec`` is accepted. In the resulting job script, they are replaced by the command (e.g. ``srun`` or ``mpirun``) and the degree of parallelism specified by ``node`` parameter.
 
 List file
 ----------------------------------------------------------------
