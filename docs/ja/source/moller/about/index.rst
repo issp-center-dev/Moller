@@ -13,12 +13,12 @@ mollerとは?
 mollerは、ハイスループット計算を支援するためのパッケージHTP-Toolsの一つとして提供しています。
 mollerではスーパーコンピュータやクラスタ向けにバッチジョブスクリプトを生成するツールであり、
 多重実行の機能を利用し、パラメータ並列など一連の計算条件について並列にプログラムを実行することができます。
-現状では、東京大学 物性研究所の提供するスーパーコンピュータ ohtaka (slurmジョブスケジューラ) と kugui (PBSジョブスケジューラ)がサポートされています。
+現状では、東京大学 物性研究所の提供するスーパーコンピュータ ohtaka (slurmジョブスケジューラ) と kugui (PBSジョブスケジューラ) に加え、汎用のPBS系クラスタや、ジョブスケジューラを使用しないワークステーション等がサポートされています。
 
 ライセンス
 ----------------------------------------------------------------
 
-本ソフトウェアのプログラムパッケージおよびソースコード一式はGNU General Public License version 3 (GPL v3) に準じて配布されています。
+本ソフトウェアのプログラムパッケージおよびソースコード一式はGNU General Public License version 3 またはそれ以降のバージョン (GPL-3.0-or-later) に準じて配布されています。
 
 開発貢献者
 ----------------------------------------------------------------
@@ -69,10 +69,50 @@ mollerではスーパーコンピュータやクラスタ向けにバッチジ�
 
 本ソフトウェアは2023年度 東京大学物性研究所 ソフトウェア高度化プロジェクトの支援を受け開発されており、その著作権は東京大学が所持しています。
 
+また、Miyabi および玄界へのインストール作業は、JST ムーンショット型研究開発事業 (グラント番号 JPMJMS24A3) の支援を受けたものです。
+
+引用について
+----------------------------------------------------------------
+
+本ソフトウェアを利用した成果を発表する際には、以下の文献を引用していただけると幸いです。
+
+  Kazuyoshi Yoshimi, Yuichi Motoyama, Tatsumi Aoyama, Mitsuaki Kawamura, and Naoki Kawashima,
+  "Project for advancement of software usability in materials science",
+  Science and Technology of Advanced Materials: Methods **5**, 2564055 (2025).
+  `https://doi.org/10.1080/27660400.2025.2564055 <https://doi.org/10.1080/27660400.2025.2564055>`_
+
+BibTeX形式:
+
+.. code-block:: bibtex
+
+  @article{Yoshimi2025,
+    author  = {Kazuyoshi Yoshimi and Yuichi Motoyama and Tatsumi Aoyama and Mitsuaki Kawamura and Naoki Kawashima},
+    title   = {Project for advancement of software usability in materials science},
+    journal = {Science and Technology of Advanced Materials: Methods},
+    volume  = {5},
+    number  = {1},
+    pages   = {2564055},
+    year    = {2025},
+    doi     = {10.1080/27660400.2025.2564055},
+    url     = {https://doi.org/10.1080/27660400.2025.2564055}
+  }
+
 動作環境
 ----------------------------------------------------------------
 
 以下の環境で動作することを確認しています。
 
 - Ubuntu Linux + python3
+
+また、以下のスーパーコンピュータでは moller がプリインストールされており、そのまま利用できます。
+
+- `物性研スパコン <https://mdcl.issp.u-tokyo.ac.jp/scc/>`_ (東京大学 物性研究所): kugui, ohtaka
+- 東北大スパコン (東北大学): `AOBA <https://www.ss.cc.tohoku.ac.jp/>`_
+- 九州大スパコン (九州大学): `玄界 <https://www.cc.kyushu-u.ac.jp/scp/system/genkai/>`_
+
+以下のスーパーコンピュータは対応済みですが、プリインストールは対応中です (2026/8/14現在)。
+
+- 東大情報基盤センター (東京大学): `Miyabi <https://www.cc.u-tokyo.ac.jp/supercomputer/miyabi/service/>`_
+
+これらのシステム上での具体的な利用方法については、各システムの利用手引き等をご確認ください。
 

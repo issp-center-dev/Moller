@@ -2,7 +2,7 @@
 
 ## What's this sample?
 
-This is a trivial example to perform jobs in paralle using a job script generated with `moller`.
+This is a trivial example to perform jobs in parallel using a job script generated with `moller`.
 Each job executes two tasks that execute a simple echo program and writes the output to a file.
 The jobs are basically identical, with an option to let parameters vary over datasets.
 
