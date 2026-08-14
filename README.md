@@ -1,3 +1,7 @@
+<div align="center">
+<img src="docs/images/moller_logo.png" alt="moller logo" width="200">
+</div>
+
 # moller
 
 [![Release](https://img.shields.io/github/v/release/issp-center-dev/Moller)](https://github.com/issp-center-dev/Moller/releases)
